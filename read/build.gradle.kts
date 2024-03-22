@@ -45,7 +45,7 @@ android {
 
 dependencies {
 
-    implementation(project(":core_view"))
+    implementation(project(":core_ui"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

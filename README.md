@@ -36,6 +36,9 @@ This module is responsible for fetching the data from some data source and displ
 - [ ] Implement Update delete
 - [ ] Add Timber logger
 - [ ] Add Coil dependency
+- [x] Add Hilt
 - [ ] Replace hardcoded strings by strings.xml file
 - [ ] Implement Single Activity architecture (Compose Navigation)
+- [ ] Create a Test module
 - [ ] Add Unit Tests
+- [ ] Extract all values from build.gradle files to libs.versions.toml

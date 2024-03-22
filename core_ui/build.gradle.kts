@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.rafver.core_view"
+    namespace = "com.rafver.core_ui"
     compileSdk = 34
 
     defaultConfig {
@@ -47,6 +47,7 @@ android {
 
 dependencies {
 
+    api(libs.androidx.lifecycle.viewmodel.compose)
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)
     api(libs.material)

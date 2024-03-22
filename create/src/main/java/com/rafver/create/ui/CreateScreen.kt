@@ -22,13 +22,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 
 @Composable
-fun CreateScreen() {
+fun CreateScreen(viewModel: CreateViewModel = viewModel()) {
     Scaffold(topBar = { CreateTopBar() }) { padding ->
-        Content(modifier = Modifier.padding(padding))
+        Content(
+            viewModel = viewModel,
+            modifier = Modifier.padding(padding)
+        )
     }
 }
 
@@ -40,7 +44,10 @@ private fun CreateTopBar() {
 }
 
 @Composable
-private fun Content(modifier: Modifier = Modifier) {
+private fun Content(
+    viewModel: CreateViewModel,
+    modifier: Modifier = Modifier
+) {
     Surface(modifier = modifier) {
         Column(
             verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
@@ -70,14 +77,14 @@ private fun Content(modifier: Modifier = Modifier) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.onDiscardClicked() }
                 ) {
                     Text(text = "Discard")
                 }
                 Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.onSaveClicked() }
                 ) {
                     Text(text = "Create")
                 }

@@ -23,5 +23,5 @@ rootProject.name = "SimpleCRUD"
 include(":app")
 include(":core_data")
 include(":create")
-include(":core_view")
+include(":core_ui")
 include(":read")

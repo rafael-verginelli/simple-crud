@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kapt)
 }
 
 android {
@@ -41,11 +43,24 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    // Allow references to generated code
+    kapt {
+        correctErrorTypes = true
+    }
+
+    hilt {
+        enableAggregatingTask = false
+    }
+
 }
 
 dependencies {
 
-    implementation(project(":core_view"))
+    implementation(project(":core_ui"))
+    implementation(project(":core_data"))
+    implementation(libs.hilt)
+    kapt(libs.hilt.kapt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
