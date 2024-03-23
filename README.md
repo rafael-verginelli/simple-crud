@@ -42,3 +42,4 @@ This module is responsible for fetching the data from some data source and displ
 - [ ] Create a Test module
 - [ ] Add Unit Tests
 - [ ] Extract all values from build.gradle files to libs.versions.toml
+- [ ] Add Lint

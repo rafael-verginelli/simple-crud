@@ -20,17 +20,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.create.ui.models.CreateUiState
+import com.rafver.create.ui.models.CreateViewEvent
 
 @Composable
-fun CreateScreen(viewModel: CreateViewModel = viewModel()) {
+fun CreateScreen(
+    viewModel: CreateViewModel = viewModel()
+) {
+    val uiState by viewModel.collectUiState()
+    val onViewEvent = viewModel::onViewEvent
+
     Scaffold(topBar = { CreateTopBar() }) { padding ->
         Content(
-            viewModel = viewModel,
+            uiState = uiState,
+            onViewEvent = onViewEvent,
             modifier = Modifier.padding(padding)
         )
     }
@@ -45,7 +55,8 @@ private fun CreateTopBar() {
 
 @Composable
 private fun Content(
-    viewModel: CreateViewModel,
+    uiState: CreateUiState,
+    onViewEvent: (CreateViewEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
@@ -57,18 +68,18 @@ private fun Content(
                 .verticalScroll(state = rememberScrollState())
         ) {
             TextField(
-                value = "Name",
-                onValueChange = {},
+                value = uiState.name,
+                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
                 modifier = Modifier.fillMaxWidth(),
             )
             TextField(
-                value = "Age",
-                onValueChange = {},
+                value = uiState.age,
+                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnAgeChanged(newValue)) },
                 modifier = Modifier.fillMaxWidth(),
             )
             TextField(
-                value = "Email",
-                onValueChange = {},
+                value = uiState.email,
+                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnEmailChanged(newValue)) },
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -77,14 +88,14 @@ private fun Content(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { viewModel.onDiscardClicked() }
+                    onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
                 ) {
                     Text(text = "Discard")
                 }
                 Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { viewModel.onSaveClicked() }
+                    onClick = { onViewEvent(CreateViewEvent.OnUpdateClicked) }
                 ) {
                     Text(text = "Create")
                 }
