@@ -59,10 +59,19 @@ dependencies {
 
     implementation(project(":core_ui"))
     implementation(project(":core_data"))
+    testImplementation(project(":core_test"))
+    androidTestImplementation(project(":core_test"))
+
+    testImplementation(libs.junit)
+
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)
 
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
 }

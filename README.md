@@ -11,10 +11,10 @@ Each module is separated in 3 packages: **Data**, **Domain** and **UI**.
 | **UI**     | Handles the visual part, what will be displayed to the user.                                          |
 
 ## Core Modules
-| Module                | Description                                                        |
-|-----------------------|--------------------------------------------------------------------|
-| **:core_data module** | Allows modules to have access to DTOs.                             |
-| **:core_ui module**   | Allows modules to access Compose, ViewModel and Coil dependencies. |
+| Module                | Description                                                                    |
+|-----------------------|--------------------------------------------------------------------------------|
+| **:core_data module** | Allows modules to have access to DTOs.                                         |
+| **:core_ui module**   | Allows modules to access Compose, ViewModel and Coil dependencies.             |
 
 ## Feature Modules
 ### :create module
@@ -39,7 +39,6 @@ This module is responsible for fetching the data from some data source and displ
 - [x] Add Hilt
 - [ ] Replace hardcoded strings by strings.xml file
 - [ ] Implement Single Activity architecture (Compose Navigation)
-- [ ] Create a Test module
 - [ ] Add Unit Tests
 - [ ] Extract all values from build.gradle files to libs.versions.toml
 - [ ] Add Lint

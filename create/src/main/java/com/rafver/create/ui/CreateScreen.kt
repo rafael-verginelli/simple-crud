@@ -15,12 +15,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,8 +41,18 @@ fun CreateScreen(
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarEvent by viewModel.snackbarEvent.collectAsState()
+    snackbarEvent?.handleSingleEvent()?.let { message ->
+        LaunchedEffect(message) {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
-    Scaffold(topBar = { CreateTopBar() }) { padding ->
+    Scaffold(
+        topBar = { CreateTopBar() },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
         Content(
             uiState = uiState,
             onViewEvent = onViewEvent,

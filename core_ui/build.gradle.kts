@@ -58,10 +58,6 @@ dependencies {
     api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
     debugApi(libs.androidx.ui.tooling)
     debugApi(libs.androidx.ui.test.manifest)
 }

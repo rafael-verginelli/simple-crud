@@ -21,7 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "SimpleCRUD"
 include(":app")
+
 include(":core_data")
-include(":create")
 include(":core_ui")
+
+include(":create")
 include(":read")
