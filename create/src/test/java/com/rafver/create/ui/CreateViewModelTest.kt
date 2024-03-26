@@ -1,6 +1,7 @@
 package com.rafver.create.ui
 
 import app.cash.turbine.test
+import com.rafver.create.R
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.util.TestCoroutineRule
 import junit.framework.TestCase.assertEquals
@@ -74,15 +75,15 @@ class CreateViewModelTest {
         // Given
         `given the tested view model`()
 
-        // When
-        viewModel.onViewEvent(CreateViewEvent.OnDiscardClicked)
-
-        advanceUntilIdle()
-
-        // Then
         // ToDo: test use cases once implemented
-        // ToDo: remove hardcoded text
-        assertEquals("Changes discarded!", viewModel.snackbarEvent.value?.peekContent())
+        viewModel.snackbarEvent.test {
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnDiscardClicked)
+            // Then
+            advanceUntilIdle()
+            assertEquals(R.string.snackbar_msg_changes_discarded, viewModel.snackbarEvent.value?.peekContent())
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

@@ -29,11 +29,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.create.R
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
@@ -59,14 +62,11 @@ fun CreateScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarEvent by viewModel.snackbarEvent.collectAsState()
-//    snackbarEvent?.handleSingleEvent()?.let { message ->
-//        LaunchedEffect(message) {
-//            snackbarHostState.showSnackbar(message)
-//        }
-//    }
+
+    val context = LocalContext.current
     LaunchedEffect(snackbarEvent) {
         snackbarEvent?.handleSingleEvent()?.let { message ->
-            snackbarHostState.showSnackbar(message)
+            snackbarHostState.showSnackbar(context.getString(message))
         }
     }
 
@@ -86,7 +86,7 @@ fun CreateScreen(
 @Composable
 private fun CreateTopBar() {
     TopAppBar(
-        title = { Text("Create New User") }
+        title = { Text(stringResource(id = R.string.title_create_user)) }
     )
 }
 
@@ -108,7 +108,7 @@ private fun Content(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
-                label = { Text("Name") },
+                label = { Text(stringResource(id = R.string.lbl_name)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
@@ -116,15 +116,15 @@ private fun Content(
             OutlinedTextField(
                 value = uiState.age,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnAgeChanged(newValue)) },
-                label = { Text("Age") },
+                label = { Text(stringResource(id = R.string.lbl_age)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                .focusRequester(focusRequester),
+                    .focusRequester(focusRequester),
             )
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnEmailChanged(newValue)) },
-                label = { Text("Email") },
+                label = { Text(stringResource(id = R.string.lbl_email)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
@@ -137,14 +137,14 @@ private fun Content(
                     modifier = Modifier.weight(1f),
                     onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
                 ) {
-                    Text(text = "Discard")
+                    Text(text = stringResource(id = R.string.action_discard))
                 }
                 Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = { onViewEvent(CreateViewEvent.OnCreateClicked) }
                 ) {
-                    Text(text = "Create")
+                    Text(text = stringResource(id = R.string.action_create))
                 }
             }
         }

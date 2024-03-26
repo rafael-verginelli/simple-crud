@@ -1,6 +1,7 @@
 package com.rafver.create.ui
 
 import com.rafver.core_ui.viewmodel.BaseViewModel
+import com.rafver.create.R
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
@@ -11,16 +12,17 @@ import javax.inject.Inject
 class CreateViewModel @Inject constructor()
     : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
 {
+        // ToDo: consider merging Snackbar Event and ViewEvent. ViewModelEffect triggers the Launched Effect in the Composable, which clears TextInput focus and calls ViewEvent.
     override suspend fun handleViewEvent(event: CreateViewEvent) {
         when(event) {
             CreateViewEvent.OnDiscardClicked -> {
                 clearForm()
                 onViewModelEffect(CreateViewModelEffect.OnNameTextInputFocusRequest)
-                onSnackbarEvent("Changes discarded!")
+                onSnackbarEvent(R.string.snackbar_msg_changes_discarded)
             }
             CreateViewEvent.OnCreateClicked -> {
                 clearForm()
-                onSnackbarEvent("User created!")
+                onSnackbarEvent(R.string.snackbar_msg_user_created)
             }
             is CreateViewEvent.OnAgeChanged -> {
                 updateState(currentState.copy(age = event.newValue))

@@ -1,5 +1,6 @@
 package com.rafver.core_ui.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,11 +18,11 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
     initialUiState: State
 ): ViewModel() {
 
-    private val _snackbarEvent = MutableStateFlow<SingleEvent<String>?>(null)
+    private val _snackbarEvent = MutableStateFlow<SingleEvent<Int>?>(null)
     val snackbarEvent = _snackbarEvent.asStateFlow()
 
-    protected fun onSnackbarEvent(message: String) {
-        _snackbarEvent.value = SingleEvent(message)
+    protected fun onSnackbarEvent(@StringRes resId: Int) {
+        _snackbarEvent.value = SingleEvent(resId)
     }
 
     // State
@@ -39,6 +40,7 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
 
     // Event
     private val _events = MutableSharedFlow<SingleEvent<Event>>()
+
     fun onViewEvent(newEvent: Event) {
         viewModelScope.launch {
             _events.emit(SingleEvent(newEvent))
