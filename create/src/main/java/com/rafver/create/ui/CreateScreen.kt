@@ -14,12 +14,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +27,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafver.core_ui.extensions.collectUiState
@@ -34,6 +36,7 @@ import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
+import com.rafver.create.ui.models.CreateViewModelEffect
 
 @Composable
 fun CreateScreen(
@@ -41,10 +44,28 @@ fun CreateScreen(
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent
+
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(key1 = viewModel.effects) {
+        viewModel.effects.collect { effect ->
+            when(effect) {
+                CreateViewModelEffect.OnNameTextInputFocusRequest -> {
+                    focusRequester.freeFocus()
+                }
+            }
+        }
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarEvent by viewModel.snackbarEvent.collectAsState()
-    snackbarEvent?.handleSingleEvent()?.let { message ->
-        LaunchedEffect(message) {
+//    snackbarEvent?.handleSingleEvent()?.let { message ->
+//        LaunchedEffect(message) {
+//            snackbarHostState.showSnackbar(message)
+//        }
+//    }
+    LaunchedEffect(snackbarEvent) {
+        snackbarEvent?.handleSingleEvent()?.let { message ->
             snackbarHostState.showSnackbar(message)
         }
     }
@@ -56,6 +77,7 @@ fun CreateScreen(
         Content(
             uiState = uiState,
             onViewEvent = onViewEvent,
+            focusRequester = focusRequester,
             modifier = Modifier.padding(padding)
         )
     }
@@ -72,6 +94,7 @@ private fun CreateTopBar() {
 private fun Content(
     uiState: CreateUiState,
     onViewEvent: (CreateViewEvent) -> Unit,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
@@ -82,20 +105,29 @@ private fun Content(
                 .padding(Dimensions.NORMAL_100)
                 .verticalScroll(state = rememberScrollState())
         ) {
-            TextField(
+            OutlinedTextField(
                 value = uiState.name,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
-                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Name") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
             )
-            TextField(
+            OutlinedTextField(
                 value = uiState.age,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnAgeChanged(newValue)) },
-                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Age") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                .focusRequester(focusRequester),
             )
-            TextField(
+            OutlinedTextField(
                 value = uiState.email,
                 onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnEmailChanged(newValue)) },
-                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Email") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
             )
 
             Spacer(modifier = Modifier.weight(1f))

@@ -3,18 +3,19 @@ package com.rafver.create.ui
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
+import com.rafver.create.ui.models.CreateViewModelEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateViewModel @Inject constructor()
-    : BaseViewModel<CreateUiState, CreateViewEvent>(CreateUiState())
+    : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
 {
-
     override suspend fun handleViewEvent(event: CreateViewEvent) {
         when(event) {
             CreateViewEvent.OnDiscardClicked -> {
                 clearForm()
+                onViewModelEffect(CreateViewModelEffect.OnNameTextInputFocusRequest)
                 onSnackbarEvent("Changes discarded!")
             }
             CreateViewEvent.OnCreateClicked -> {

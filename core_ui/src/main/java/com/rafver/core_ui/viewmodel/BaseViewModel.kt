@@ -1,16 +1,19 @@
 package com.rafver.core_ui.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafver.core_ui.util.SingleEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State: UiState, Event: ViewEvent>(
+abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModelEffect>(
     initialUiState: State
 ): ViewModel() {
 
@@ -52,6 +55,18 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent>(
                     handleViewEvent(it)
                 }
             }
+        }
+    }
+    // -------
+
+    // Effect
+    private val _effects = MutableSharedFlow<Effect>()
+    val effects = _effects.asSharedFlow()
+
+
+    protected fun onViewModelEffect(effect: Effect) {
+        viewModelScope.launch {
+            _effects.emit(effect)
         }
     }
     // -------
