@@ -2,7 +2,8 @@ package com.rafver.core_ui.util
 
 class SingleEvent<out T>(private val content: T) {
 
-    private var hasBeenHandled: Boolean = false
+    var hasBeenHandled: Boolean = false
+        private set
 
     fun handleSingleEvent(): T? {
         return if(!hasBeenHandled) {

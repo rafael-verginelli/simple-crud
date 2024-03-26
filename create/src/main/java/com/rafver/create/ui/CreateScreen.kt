@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.rafver.create.ui
 
@@ -110,7 +110,7 @@ private fun Content(
                 Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { onViewEvent(CreateViewEvent.OnUpdateClicked) }
+                    onClick = { onViewEvent(CreateViewEvent.OnCreateClicked) }
                 ) {
                     Text(text = "Create")
                 }

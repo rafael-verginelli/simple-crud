@@ -70,15 +70,35 @@ class CreateViewModelTest {
     }
 
     @Test
-    fun `when discard button is clicked, the correct view event is triggered and snackbar effect is triggered`() = runTest {
+    fun `when discard button is clicked, the correct snackbar event is triggered`() = runTest {
         // Given
         `given the tested view model`()
 
         // When
         viewModel.onViewEvent(CreateViewEvent.OnDiscardClicked)
 
+        advanceUntilIdle()
+
         // Then
-        // ToDo: transform [ViewEvent] and [ViewModelEffect] into Flow/Channel to unit test events properly
+        // ToDo: test use cases once implemented
+        // ToDo: remove hardcoded text
+        assertEquals("Changes discarded!", viewModel.snackbarEvent.value?.peekContent())
+    }
+
+    @Test
+    fun `when create button is clicked, the correct snackbar event is triggered`() = runTest {
+        // Given
+        `given the tested view model`()
+
+        // When
+        viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
+
+        advanceUntilIdle()
+
+        // Then
+        // ToDo: test use cases once implemented
+        // ToDo: remove hardcoded text
+        assertEquals("User created!", viewModel.snackbarEvent.value?.peekContent())
     }
 
     private fun `given the tested view model`() {

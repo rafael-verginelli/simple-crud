@@ -1,13 +1,16 @@
 package com.rafver.core_ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.rafver.core_ui.util.SingleEvent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModelEffect>(
+abstract class BaseViewModel<State: UiState, Event: ViewEvent>(
     initialUiState: State
 ): ViewModel() {
 
@@ -18,6 +21,7 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
         _snackbarEvent.value = SingleEvent(message)
     }
 
+    // State
     private val _uiState = MutableStateFlow(initialUiState)
     val uiState: Flow<State> = _uiState.onEach {
         println("Emitted new State: $it")
@@ -28,7 +32,27 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
     protected fun updateState(newState: State) {
         _uiState.value = newState
     }
+    // -------
 
-    protected abstract fun onViewEvent(newEvent: Event)
-    protected abstract fun onViewModelEffect(newEffect: Effect)
+    // Event
+    private val _events = MutableSharedFlow<SingleEvent<Event>>()
+    fun onViewEvent(newEvent: Event) {
+        viewModelScope.launch {
+            _events.emit(SingleEvent(newEvent))
+        }
+    }
+
+    protected abstract suspend fun handleViewEvent(event: Event)
+
+    init {
+        viewModelScope.launch {
+            _events.collect { event ->
+                event.handleSingleEvent()?.let {
+                    println("Emitted new Event: $it")
+                    handleViewEvent(it)
+                }
+            }
+        }
+    }
+    // -------
 }

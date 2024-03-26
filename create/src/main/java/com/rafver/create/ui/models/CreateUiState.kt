@@ -2,7 +2,6 @@ package com.rafver.create.ui.models
 
 import com.rafver.core_ui.viewmodel.UiState
 import com.rafver.core_ui.viewmodel.ViewEvent
-import com.rafver.core_ui.viewmodel.ViewModelEffect
 
 data class CreateUiState(
     val name: String = "",
@@ -16,10 +15,5 @@ sealed class CreateViewEvent: ViewEvent {
     data class OnAgeChanged(val newValue: String): CreateViewEvent()
     data class OnEmailChanged(val newValue: String): CreateViewEvent()
     data object OnDiscardClicked: CreateViewEvent()
-    data object OnUpdateClicked: CreateViewEvent()
-}
-
-sealed class CreateViewModelEffect: ViewModelEffect {
-    data object ShowDiscardSnackbar: CreateViewModelEffect()
-    data object ShowUserCreatedSnackbar: CreateViewModelEffect()
+    data object OnCreateClicked: CreateViewEvent()
 }
