@@ -3,6 +3,7 @@ package com.rafver.create.ui
 import app.cash.turbine.test
 import com.rafver.create.R
 import com.rafver.create.ui.models.CreateViewEvent
+import com.rafver.create.ui.models.CreateViewModelEffect
 import com.rafver.create.util.TestCoroutineRule
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -71,17 +72,18 @@ class CreateViewModelTest {
     }
 
     @Test
-    fun `when discard button is clicked, the correct snackbar event is triggered`() = runTest {
+    fun `when discard button is clicked, the correct snackbar event is triggered and the text input focus clear effect is triggered`() = runTest {
         // Given
         `given the tested view model`()
 
         // ToDo: test use cases once implemented
-        viewModel.snackbarEvent.test {
+        viewModel.effects.test {
             // When
             viewModel.onViewEvent(CreateViewEvent.OnDiscardClicked)
             // Then
             advanceUntilIdle()
-            assertEquals(R.string.snackbar_msg_changes_discarded, viewModel.snackbarEvent.value?.peekContent())
+            assertEquals(CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_changes_discarded), awaitItem())
+            assertEquals(CreateViewModelEffect.OnNameTextInputFocusRequest, awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -98,8 +100,14 @@ class CreateViewModelTest {
 
         // Then
         // ToDo: test use cases once implemented
-        // ToDo: remove hardcoded text
-        assertEquals("User created!", viewModel.snackbarEvent.value?.peekContent())
+        viewModel.effects.test {
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
+            // Then
+            advanceUntilIdle()
+            assertEquals(CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_user_created), awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private fun `given the tested view model`() {

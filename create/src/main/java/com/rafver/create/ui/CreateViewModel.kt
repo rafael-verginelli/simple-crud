@@ -12,17 +12,20 @@ import javax.inject.Inject
 class CreateViewModel @Inject constructor()
     : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
 {
-        // ToDo: consider merging Snackbar Event and ViewEvent. ViewModelEffect triggers the Launched Effect in the Composable, which clears TextInput focus and calls ViewEvent.
     override suspend fun handleViewEvent(event: CreateViewEvent) {
         when(event) {
             CreateViewEvent.OnDiscardClicked -> {
                 clearForm()
+                onViewModelEffect(
+                    CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_changes_discarded)
+                )
                 onViewModelEffect(CreateViewModelEffect.OnNameTextInputFocusRequest)
-                onSnackbarEvent(R.string.snackbar_msg_changes_discarded)
             }
             CreateViewEvent.OnCreateClicked -> {
                 clearForm()
-                onSnackbarEvent(R.string.snackbar_msg_user_created)
+                onViewModelEffect(
+                    CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_user_created)
+                )
             }
             is CreateViewEvent.OnAgeChanged -> {
                 updateState(currentState.copy(age = event.newValue))

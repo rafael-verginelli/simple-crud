@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -50,23 +49,19 @@ fun CreateScreen(
 
     val focusRequester = remember { FocusRequester() }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     LaunchedEffect(key1 = viewModel.effects) {
         viewModel.effects.collect { effect ->
             when(effect) {
+                is CreateViewModelEffect.DisplaySnackbar -> {
+                    snackbarHostState.showSnackbar(context.getString(effect.resId))
+                }
+
                 CreateViewModelEffect.OnNameTextInputFocusRequest -> {
                     focusRequester.freeFocus()
                 }
             }
-        }
-    }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarEvent by viewModel.snackbarEvent.collectAsState()
-
-    val context = LocalContext.current
-    LaunchedEffect(snackbarEvent) {
-        snackbarEvent?.handleSingleEvent()?.let { message ->
-            snackbarHostState.showSnackbar(context.getString(message))
         }
     }
 

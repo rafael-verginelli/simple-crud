@@ -1,5 +1,7 @@
 package com.rafver.create.ui.models
 
+import androidx.annotation.StringRes
+import com.rafver.core_ui.util.SingleEvent
 import com.rafver.core_ui.viewmodel.UiState
 import com.rafver.core_ui.viewmodel.ViewEvent
 import com.rafver.core_ui.viewmodel.ViewModelEffect
@@ -20,5 +22,6 @@ sealed class CreateViewEvent: ViewEvent {
 }
 
 sealed class CreateViewModelEffect: ViewModelEffect {
+    data class DisplaySnackbar(@StringRes val resId: Int): CreateViewModelEffect()
     data object OnNameTextInputFocusRequest: CreateViewModelEffect()
 }
