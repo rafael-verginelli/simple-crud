@@ -1,5 +1,8 @@
 package com.rafver.core_ui.util
 
+/**
+ * Wrapper for an event that should be consumed only once
+ */
 class SingleEvent<out T>(private val content: T) {
 
     var hasBeenHandled: Boolean = false

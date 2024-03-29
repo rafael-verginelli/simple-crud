@@ -1,13 +1,15 @@
 package com.rafver.core_ui.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafver.core_ui.util.SingleEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModelEffect>(
@@ -22,7 +24,8 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
 
     val currentState get() = _uiState.value
 
-    protected fun updateState(newState: State) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun updateState(newState: State) {
         _uiState.value = newState
     }
     // -------
@@ -51,13 +54,15 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
     // -------
 
     // Effect
-    private val _effects = MutableSharedFlow<Effect>()
-    val effects = _effects.asSharedFlow()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val effectsChannel = Channel<Effect>()
+
+    val effects = effectsChannel.receiveAsFlow()
 
 
     protected fun onViewModelEffect(effect: Effect) {
         viewModelScope.launch {
-            _effects.emit(effect)
+            effectsChannel.send(effect)
         }
     }
     // -------

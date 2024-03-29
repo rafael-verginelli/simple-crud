@@ -11,7 +11,7 @@ import org.junit.runner.Description
 
 // ToDo: Move this file to a separate :core_test module to be accessible to other modules.
 @OptIn(ExperimentalCoroutinesApi::class)
-class TestCoroutineRule constructor(
+class TestCoroutineRule(
     private val testDispatcher: TestDispatcher = StandardTestDispatcher(),
 ) : TestWatcher() {
 

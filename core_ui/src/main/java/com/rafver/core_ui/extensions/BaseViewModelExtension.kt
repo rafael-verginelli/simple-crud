@@ -9,7 +9,7 @@ import com.rafver.core_ui.viewmodel.ViewModelEffect
 import androidx.compose.runtime.State as ComposeState
 
 /**
- * Method that observers [UiState] and triggers Recomposition every time the value is updated.
+ * Method that observes [UiState] and triggers Recomposition every time the value is updated.
  */
 @Composable
 fun <State: UiState, Event: ViewEvent, Effect: ViewModelEffect>BaseViewModel<State, Event, Effect>
