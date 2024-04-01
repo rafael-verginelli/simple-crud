@@ -1,11 +1,13 @@
 package com.rafver.create.data
 
+import androidx.annotation.StringRes
+
 sealed class CreateResultType {
     data object Ok: CreateResultType()
     sealed class Error: CreateResultType() {
-        data object NameMandatory: Error()
-        data object AgeMandatory: Error()
-        data object InvalidAge: Error()
-        data object EmailMandatory: Error()
+        data class NameMandatory(@StringRes val resId: Int): Error()
+        data class AgeMandatory(@StringRes val resId: Int): Error()
+        data class InvalidAge(@StringRes val resId: Int): Error()
+        data class EmailMandatory(@StringRes val resId: Int): Error()
     }
 }

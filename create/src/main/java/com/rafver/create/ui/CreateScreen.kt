@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafver.core_ui.extensions.collectUiState
@@ -107,6 +112,17 @@ private fun Content(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
+                isError = uiState.errors.mandatoryNameError != null,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next,
+                ),
+                supportingText = {
+                    uiState.errors.mandatoryNameError?.let {
+                        Text(text = stringResource(id = it))
+                    }
+                }
             )
             OutlinedTextField(
                 value = uiState.age,
@@ -115,6 +131,20 @@ private fun Content(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next,
+                ),
+                isError = uiState.errors.mandatoryAgeError != null || uiState.errors.invalidAgeError != null,
+                supportingText = {
+                    uiState.errors.mandatoryAgeError?.let {
+                        Text(text = stringResource(id = it))
+                    }
+                    uiState.errors.invalidAgeError?.let {
+                        Text(text = stringResource(id = it))
+                    }
+                }
             )
             OutlinedTextField(
                 value = uiState.email,
@@ -123,6 +153,18 @@ private fun Content(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    capitalization = KeyboardCapitalization.None,
+                    imeAction = ImeAction.Done,
+                ),
+                isError = uiState.errors.mandatoryEmailError != null,
+                supportingText = {
+                    uiState.errors.mandatoryEmailError?.let {
+                        Text(text = stringResource(id = it))
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.weight(1f))

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.rafver.create.R
 import com.rafver.create.data.CreateResultType
 import com.rafver.create.domain.usecases.ValidateUser
+import com.rafver.create.ui.models.CreateUiErrorState
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
@@ -13,7 +14,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -37,14 +37,51 @@ class CreateViewModelTest {
         `given the tested view model`()
         val expectedName = "john"
 
-        // When
-        viewModel.onViewEvent(CreateViewEvent.OnNameChanged("john"))
-
-        advanceUntilIdle()
-
-        // Then
         viewModel.uiState.test {
-            assertEquals(expectedName, awaitItem().name)
+
+            awaitItem().name `should be equal to` ""
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnNameChanged("john"))
+
+            // Then
+            awaitItem().name `should be equal to` expectedName
+        }
+    }
+
+    @Test
+    fun `when user inputs a new name, if errors are present, the name error is removed, but not the others`() = runTest {
+        // Given
+        `given the tested view model`()
+        val expectedName = "john"
+        val initialErrors = CreateUiErrorState(
+            mandatoryNameError = 123,
+            mandatoryAgeError = 234,
+            invalidAgeError = 345,
+            mandatoryEmailError = 456
+        )
+        val expectedErrors = CreateUiErrorState(
+            mandatoryNameError = null,
+            mandatoryAgeError = 234,
+            invalidAgeError = 345,
+            mandatoryEmailError = 456
+        )
+        viewModel.updateState(CreateUiState(errors = initialErrors))
+
+        viewModel.uiState.test {
+            awaitItem().run {
+                name `should be equal to` ""
+                errors `should be equal to` initialErrors
+            }
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnNameChanged("john"))
+
+            // Then
+            awaitItem().run {
+                name `should be equal to` expectedName
+                errors `should be equal to` expectedErrors
+            }
         }
     }
 
@@ -54,14 +91,51 @@ class CreateViewModelTest {
         `given the tested view model`()
         val expectedAge = "20"
 
-        // When
-        viewModel.onViewEvent(CreateViewEvent.OnAgeChanged("20"))
-
-        advanceUntilIdle()
-
-        // Then
         viewModel.uiState.test {
-            assertEquals(expectedAge, awaitItem().age)
+            awaitItem().age `should be equal to` ""
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnAgeChanged("20"))
+            advanceUntilIdle()
+
+            // Then
+            awaitItem().age `should be equal to` expectedAge
+        }
+    }
+
+    @Test
+    fun `when user inputs a new age, if errors are present, the age errors are removed, but not the others`() = runTest {
+        // Given
+        `given the tested view model`()
+        val expectedAge = "20"
+        val initialErrors = CreateUiErrorState(
+            mandatoryNameError = 123,
+            mandatoryAgeError = 234,
+            invalidAgeError = 345,
+            mandatoryEmailError = 456
+        )
+        val expectedErrors = CreateUiErrorState(
+            mandatoryNameError = 123,
+            mandatoryAgeError = null,
+            invalidAgeError = null,
+            mandatoryEmailError = 456
+        )
+        viewModel.updateState(CreateUiState(errors = initialErrors))
+
+        viewModel.uiState.test {
+            awaitItem().run {
+                age `should be equal to` ""
+                errors `should be equal to` initialErrors
+            }
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnAgeChanged("20"))
+
+            // Then
+            awaitItem().run {
+                age `should be equal to` expectedAge
+                errors `should be equal to` expectedErrors
+            }
         }
     }
 
@@ -71,14 +145,52 @@ class CreateViewModelTest {
         `given the tested view model`()
         val expectedEmail = "john@doe.com"
 
-        // When
-        viewModel.onViewEvent(CreateViewEvent.OnEmailChanged("john@doe.com"))
 
-        advanceUntilIdle()
-
-        // Then
         viewModel.uiState.test {
-            assertEquals(expectedEmail, awaitItem().email)
+            awaitItem().email `should be equal to` ""
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnEmailChanged("john@doe.com"))
+            advanceUntilIdle()
+
+            // Then
+            awaitItem().email `should be equal to` expectedEmail
+        }
+    }
+
+    @Test
+    fun `when user inputs a new email, if errors are present, the email error is removed, but not the others`() = runTest {
+        // Given
+        `given the tested view model`()
+        val expectedEmail = "john@doe.com"
+        val initialErrors = CreateUiErrorState(
+            mandatoryNameError = 123,
+            mandatoryAgeError = 234,
+            invalidAgeError = 345,
+            mandatoryEmailError = 456
+        )
+        val expectedErrors = CreateUiErrorState(
+            mandatoryNameError = 123,
+            mandatoryAgeError = 234,
+            invalidAgeError = 345,
+            mandatoryEmailError = null
+        )
+        viewModel.updateState(CreateUiState(errors = initialErrors))
+
+        viewModel.uiState.test {
+            awaitItem().run {
+                email `should be equal to` ""
+                errors `should be equal to` initialErrors
+            }
+
+            // When
+            viewModel.onViewEvent(CreateViewEvent.OnEmailChanged("john@doe.com"))
+
+            // Then
+            awaitItem().run {
+                email `should be equal to` expectedEmail
+                errors `should be equal to` expectedErrors
+            }
         }
     }
 
@@ -104,7 +216,7 @@ class CreateViewModelTest {
         `given the tested view model`()
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
-        } returns CreateResultType.Ok
+        } returns emptyList()
 
         val expectedSnackbarEvent = CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_user_created)
 
@@ -149,16 +261,17 @@ class CreateViewModelTest {
     fun `when create button is clicked, if name field is empty the ui state is updated with the correct error state`() = runTest {
         // Given
         `given the tested view model`()
+        val expectedErrorState = CreateResultType.Error.NameMandatory(R.string.error_create_mandatory_field)
         every {
             validateUser(name = "", age = any(), email = any())
-        } returns CreateResultType.Error.NameMandatory
+        } returns listOf(expectedErrorState)
 
         // When
         viewModel.uiState.test {
             // Then
             awaitItem().errors.mandatoryNameError `should be equal to` null
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryNameError `should be equal to` CreateResultType.Error.NameMandatory
+            awaitItem().errors.mandatoryNameError `should be equal to` expectedErrorState.resId
         }
 
         verify(exactly = 1) {
@@ -170,16 +283,17 @@ class CreateViewModelTest {
     fun `when create button is clicked, if age field is empty the ui state is updated with the correct error state`() = runTest {
         // Given
         `given the tested view model`()
+        val expectedErrorState = CreateResultType.Error.AgeMandatory(R.string.error_create_mandatory_field)
         every {
             validateUser(name = any(), age = "", email = any())
-        } returns CreateResultType.Error.AgeMandatory
+        } returns listOf(expectedErrorState)
 
         // When
         viewModel.uiState.test {
             // Then
             awaitItem().errors.mandatoryAgeError `should be equal to` null
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryAgeError `should be equal to` CreateResultType.Error.AgeMandatory
+            awaitItem().errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
         }
 
         verify(exactly = 1) {
@@ -191,22 +305,23 @@ class CreateViewModelTest {
     fun `when create button is clicked, if age field is invalid the ui state is updated with the correct error state`() = runTest {
         // Given
         `given the tested view model`()
+        val expectedErrorState = CreateResultType.Error.InvalidAge(R.string.error_create_invalid_age)
         every {
-            validateUser(name = any(), age = any(), email = any())
-        } returns CreateResultType.Error.InvalidAge
+            validateUser(name = any(), age = "abc", email = any())
+        } returns listOf(expectedErrorState)
+
+        viewModel.updateState(CreateUiState(age = "abc"))
 
         // When
         viewModel.uiState.test {
             // Then
             awaitItem().errors.invalidAgeError `should be equal to` null
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            advanceUntilIdle()
-            awaitItem().errors.invalidAgeError `should be equal to` CreateResultType.Error.InvalidAge
-            cancelAndIgnoreRemainingEvents()
+            awaitItem().errors.invalidAgeError `should be equal to` expectedErrorState.resId
         }
 
         verify(exactly = 1) {
-            validateUser(name = any(), age = any(), email = any())
+            validateUser(name = any(), age = "abc", email = any())
         }
     }
 
@@ -214,20 +329,65 @@ class CreateViewModelTest {
     fun `when create button is clicked, if email field is empty the ui state is updated with the correct error state`() = runTest {
         // Given
         `given the tested view model`()
+        val expectedErrorState = CreateResultType.Error.EmailMandatory(R.string.error_create_mandatory_field)
         every {
-            validateUser(name = "", age = any(), email = any())
-        } returns CreateResultType.Error.EmailMandatory
+            validateUser(name = any(), age = any(), email = "")
+        } returns listOf(expectedErrorState)
 
         // When
         viewModel.uiState.test {
             // Then
             awaitItem().errors.mandatoryEmailError `should be equal to` null
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryEmailError `should be equal to` CreateResultType.Error.EmailMandatory
+            awaitItem().errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
         }
 
         verify(exactly = 1) {
             validateUser(name = any(), age = any(), email = "")
+        }
+    }
+
+    @Test
+    fun `when create button is clicked, if multiple fields are empty the ui state is updated with the correct error state`() = runTest {
+        // Given
+        `given the tested view model`()
+        val expectedNameErrorState = CreateResultType.Error.NameMandatory(R.string.error_create_mandatory_field)
+        val expectedAgeErrorState = CreateResultType.Error.AgeMandatory(R.string.error_create_mandatory_field)
+        val expectedEmailErrorState = CreateResultType.Error.EmailMandatory(R.string.error_create_mandatory_field)
+        every {
+            validateUser(name = "", age = "", email = "")
+        } returns listOf(
+            expectedNameErrorState,
+            expectedAgeErrorState,
+            expectedEmailErrorState,
+        )
+
+        // When
+        viewModel.uiState.test {
+            // Then
+            awaitItem().errors.run {
+                mandatoryNameError `should be equal to` null
+                mandatoryAgeError `should be equal to` null
+                invalidAgeError `should be equal to` null
+                mandatoryEmailError `should be equal to` null
+            }
+            viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
+
+            /**
+             * Errors states are updated one after the other, so multiple emissions are made,
+             * meaning that we have to call awaitItem() for each emission.
+             * ToDo: emit all errors at once and adapt the unit test
+             */
+            awaitItem().errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
+            awaitItem().errors.run {
+                mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
+                invalidAgeError `should be equal to` null
+            }
+            awaitItem().errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+        }
+
+        verify(exactly = 1) {
+            validateUser(name = "", age = "", email = "")
         }
     }
 

@@ -30,15 +30,17 @@ This module is responsible for fetching the data from some data source and displ
 - :core_ui
 
 ## ToDo
-- [ ] Implement business logic for :create module
+- [ ] Implement business logic for :create module (in progress)
 - [ ] Implement business logic for :read module
 - [ ] Implement Update operation
 - [ ] Implement Update delete
 - [ ] Add Timber logger
 - [ ] Add Coil dependency
 - [x] Add Hilt
-- [ ] Replace hardcoded strings by strings.xml file
+- [ ] Replace hardcoded strings by strings.xml file (in progress)
 - [ ] Implement Single Activity architecture (Compose Navigation)
-- [ ] Add Unit Tests
+- [ ] Add Unit Tests (in progress)
 - [ ] Extract all values from build.gradle files to libs.versions.toml
 - [ ] Add Lint
+- [ ] Emit all input validation errors at once in :create module
+- [ ] Add GitHub Actions for running unit tests when PRs are created

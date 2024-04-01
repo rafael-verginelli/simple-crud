@@ -15,10 +15,10 @@ data class CreateUiState(
 ): UiState
 
 data class CreateUiErrorState(
-    val mandatoryNameError: CreateResultType.Error.NameMandatory? = null,
-    val mandatoryAgeError: CreateResultType.Error.AgeMandatory? = null,
-    val invalidAgeError: CreateResultType.Error.InvalidAge? = null,
-    val mandatoryEmailError: CreateResultType.Error.EmailMandatory? = null,
+    @StringRes val mandatoryNameError: Int? = null,
+    @StringRes val mandatoryAgeError: Int? = null,
+    @StringRes val invalidAgeError: Int? = null,
+    @StringRes val mandatoryEmailError: Int? = null,
 )
 
 sealed class CreateViewEvent: ViewEvent {

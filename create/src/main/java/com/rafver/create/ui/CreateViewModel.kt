@@ -27,59 +27,70 @@ class CreateViewModel @Inject constructor(
                 onViewModelEffect(CreateViewModelEffect.OnNameTextInputFocusRequest)
             }
             CreateViewEvent.OnCreateClicked -> {
-                val result = validateUser(
+                val validationErrors = validateUser(
                     name = currentState.name,
                     age = currentState.age,
                     email = currentState.email,
                 )
-
-                when(result) {
-                    CreateResultType.Ok -> {
-                        clearForm()
-                        onViewModelEffect(
-                            CreateViewModelEffect.DisplaySnackbar(
-                                resId = R.string.snackbar_msg_user_created,
-                            )
+                if(validationErrors.isEmpty()) {
+                    clearForm()
+                    onViewModelEffect(
+                        CreateViewModelEffect.DisplaySnackbar(
+                            resId = R.string.snackbar_msg_user_created,
                         )
-                    }
-                    is CreateResultType.Error.AgeMandatory -> {
-                        updateState(
-                            currentState.copy(
-                                errors = currentState.errors.copy(mandatoryAgeError = result)
-                            )
-                        )
-                    }
-                    is CreateResultType.Error.EmailMandatory -> {
-                        updateState(
-                            currentState.copy(
-                                errors = currentState.errors.copy(mandatoryEmailError = result)
-                            )
-                        )
-                    }
-                    is CreateResultType.Error.InvalidAge -> {
-                        updateState(
-                            currentState.copy(
-                                errors = currentState.errors.copy(invalidAgeError = result)
-                            )
-                        )
-                    }
-                    is CreateResultType.Error.NameMandatory -> {
-                        updateState(
-                            currentState.copy(
-                                errors = currentState.errors.copy(mandatoryNameError = result)
-                            )
-                        )
+                    )
+                } else {
+                    validationErrors.forEach { error ->
+                        when(error) {
+                            is CreateResultType.Error.AgeMandatory -> {
+                                updateState(
+                                    currentState.copy(
+                                        errors = currentState.errors.copy(mandatoryAgeError = error.resId)
+                                    )
+                                )
+                            }
+                            is CreateResultType.Error.EmailMandatory -> {
+                                updateState(
+                                    currentState.copy(
+                                        errors = currentState.errors.copy(mandatoryEmailError = error.resId)
+                                    )
+                                )
+                            }
+                            is CreateResultType.Error.InvalidAge -> {
+                                updateState(
+                                    currentState.copy(
+                                        errors = currentState.errors.copy(invalidAgeError = error.resId)
+                                    )
+                                )
+                            }
+                            is CreateResultType.Error.NameMandatory -> {
+                                updateState(
+                                    currentState.copy(
+                                        errors = currentState.errors.copy(mandatoryNameError = error.resId)
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }
             is CreateViewEvent.OnAgeChanged -> {
-                updateState(currentState.copy(age = event.newValue))
+                updateState(currentState.copy(
+                    age = event.newValue,
+                    errors = currentState.errors.copy(mandatoryAgeError = null, invalidAgeError = null)
+                ))
             }
             is CreateViewEvent.OnEmailChanged -> {
-                updateState(currentState.copy(email = event.newValue))
+                updateState(currentState.copy(
+                    email = event.newValue,
+                    errors = currentState.errors.copy(mandatoryEmailError = null)
+                ))
             }
             is CreateViewEvent.OnNameChanged -> {
-                updateState(currentState.copy(name = event.newValue))
+                updateState(currentState.copy(
+                    name = event.newValue,
+                    errors = currentState.errors.copy(mandatoryNameError = null)
+                ))
             }
         }
     }
