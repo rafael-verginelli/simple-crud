@@ -3,6 +3,7 @@ package com.rafver.create.ui
 import app.cash.turbine.test
 import com.rafver.create.R
 import com.rafver.create.data.CreateResultType
+import com.rafver.create.domain.usecases.CreateUser
 import com.rafver.create.domain.usecases.ValidateUser
 import com.rafver.create.ui.models.CreateUiErrorState
 import com.rafver.create.ui.models.CreateUiState
@@ -28,6 +29,7 @@ class CreateViewModelTest {
     val testCoroutineRule = TestCoroutineRule()
 
     private val validateUser: ValidateUser = mockk(relaxed = true)
+    private val createUser: CreateUser = mockk(relaxed = true)
 
     private lateinit var viewModel: CreateViewModel
 
@@ -211,12 +213,15 @@ class CreateViewModelTest {
     }
 
     @Test
-    fun `when create button is clicked, if inputs are valid, the correct snackbar event is triggered and the state is cleared`() = runTest {
+    fun `when create button is clicked, if inputs are valid and creation succeeds, the correct snackbar event is triggered and the state is cleared`() = runTest {
         // Given
         `given the tested view model`()
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
+        every {
+            createUser(name = "john", age = "30", email = "john@doe.com")
+        } returns Result.success(CreateResultType.Ok)
 
         val expectedSnackbarEvent = CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_user_created)
 
@@ -245,6 +250,55 @@ class CreateViewModelTest {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+            }
+
+            expectNoEvents()
+        }
+
+        viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
+
+        verify(exactly = 1) {
+            validateUser("john", "30", "john@doe.com")
+        }
+    }
+
+    @Test
+    fun `when create button is clicked, if inputs are valid but creation fails, the error snackbar event is triggered and the state is not cleared`() = runTest {
+        // Given
+        `given the tested view model`()
+        every {
+            validateUser(name = "john", age = "30", email = "john@doe.com")
+        } returns emptyList()
+        every {
+            createUser(name = "john", age = "30", email = "john@doe.com")
+        } returns Result.failure(Exception("Can't add user"))
+
+        val expectedSnackbarEvent = CreateViewModelEffect.DisplaySnackbar(R.string.error_create_generic)
+
+        // Then
+        viewModel.uiState.test {
+            // initial state
+            awaitItem().run {
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+            }
+            // When
+            viewModel.updateState(CreateUiState(name = "john", age = "30", email = "john@doe.com"))
+
+            // updated state
+            awaitItem().run {
+                name `should be equal to` "john"
+                age `should be equal to` "30"
+                email `should be equal to` "john@doe.com"
+            }
+
+            viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
+
+            viewModel.currentState.run {
+                name `should be equal to` "john"
+                age `should be equal to` "30"
+                email `should be equal to` "john@doe.com"
             }
 
             expectNoEvents()
@@ -373,11 +427,6 @@ class CreateViewModelTest {
             }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
 
-            /**
-             * Errors states are updated one after the other, so multiple emissions are made,
-             * meaning that we have to call awaitItem() for each emission.
-             * ToDo: emit all errors at once and adapt the unit test
-             */
             awaitItem().errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
             awaitItem().errors.run {
                 mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
@@ -399,6 +448,7 @@ class CreateViewModelTest {
     private fun `given the tested view model`() {
         viewModel = CreateViewModel(
             validateUser = validateUser,
+            createUser = createUser,
         )
     }
 }

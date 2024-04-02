@@ -3,6 +3,7 @@ package com.rafver.create.ui
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.create.R
 import com.rafver.create.data.CreateResultType
+import com.rafver.create.domain.usecases.CreateUser
 import com.rafver.create.domain.usecases.ValidateUser
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateViewModel @Inject constructor(
     private val validateUser: ValidateUser,
-    ) : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
+    private val createUser: CreateUser,
+) : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
 {
     override suspend fun handleViewEvent(event: CreateViewEvent) {
         when(event) {
@@ -33,12 +35,19 @@ class CreateViewModel @Inject constructor(
                     email = currentState.email,
                 )
                 if(validationErrors.isEmpty()) {
-                    clearForm()
-                    onViewModelEffect(
-                        CreateViewModelEffect.DisplaySnackbar(
-                            resId = R.string.snackbar_msg_user_created,
+                    val result = createUser(currentState.name, currentState.age, currentState.email)
+                    if(result.isSuccess) {
+                        clearForm()
+                        onViewModelEffect(
+                            CreateViewModelEffect.DisplaySnackbar(
+                                resId = R.string.snackbar_msg_user_created,
+                            )
                         )
-                    )
+                    } else {
+                        val error = result.exceptionOrNull()
+                        handleException(error)
+                    }
+
                 } else {
                     validationErrors.forEach { error ->
                         when(error) {
@@ -93,6 +102,17 @@ class CreateViewModel @Inject constructor(
                 ))
             }
         }
+    }
+
+    private fun handleException(error: Throwable?) {
+        // ToDo: handle exception here
+        println("An error has occurred: ${error?.message}")
+
+        onViewModelEffect(
+            CreateViewModelEffect.DisplaySnackbar(
+                resId = R.string.error_create_generic,
+            )
+        )
     }
 
     private fun clearForm() {

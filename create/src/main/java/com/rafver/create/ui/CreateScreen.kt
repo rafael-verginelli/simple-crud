@@ -171,6 +171,7 @@ private fun Content(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
+                    enabled = uiState.name.isNotEmpty() && uiState.age.isNotEmpty() && uiState.email.isNotEmpty(),
                     modifier = Modifier.weight(1f),
                     onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
                 ) {

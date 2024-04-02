@@ -42,5 +42,4 @@ This module is responsible for fetching the data from some data source and displ
 - [ ] Add Unit Tests (in progress)
 - [ ] Extract all values from build.gradle files to libs.versions.toml
 - [ ] Add Lint
-- [ ] Emit all input validation errors at once in :create module
 - [ ] Add GitHub Actions for running unit tests when PRs are created
