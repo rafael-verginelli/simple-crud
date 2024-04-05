@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package com.rafver.create.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -83,6 +81,7 @@ fun CreateScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateTopBar() {
     TopAppBar(
@@ -171,7 +170,7 @@ private fun Content(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    enabled = uiState.name.isNotEmpty() && uiState.age.isNotEmpty() && uiState.email.isNotEmpty(),
+                    enabled = uiState.name.isNotEmpty() || uiState.age.isNotEmpty() || uiState.email.isNotEmpty(),
                     modifier = Modifier.weight(1f),
                     onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
                 ) {
