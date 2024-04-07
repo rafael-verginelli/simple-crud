@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_read_user">Users</string>
+    <string name="lbl_age">Age</string>
+    <string name="lbl_email">Email</string>
+    <string name="error_read_generic">Something is wrong.</string>
+    <string name="empty_list">Nothing to show here!\nTry adding something ;)</string>
+</resources>

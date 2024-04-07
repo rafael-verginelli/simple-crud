@@ -1,8 +1,6 @@
 package com.rafver.create.domain.usecases
 
-import com.rafver.core_data.dtos.UserDTO
-import com.rafver.create.data.CreateResultType
-import com.rafver.create.domain.repositories.UserRepository
+import com.rafver.core_data.repositories.UserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -27,7 +25,7 @@ class CreateUserTest {
 
         // when
         var caughtException: Exception? = null
-        var result: Result<CreateResultType>? = null
+        var result: Result<Boolean>? = null
         try {
             result = useCase(name, age, email)
         } catch (e: Exception) {
@@ -39,7 +37,7 @@ class CreateUserTest {
         caughtException?.message `should be equal to` expectedExceptionMessage
 
         verify(exactly = 0) {
-            userRepository.createUser(any())
+            userRepository.createUser(any(), any(), any())
         }
     }
 
@@ -51,24 +49,21 @@ class CreateUserTest {
         val expectedAge = 20
         val expectedEmail = "john@doe.com"
         val expectedException = Exception("Some Exception")
-        val slot = slot<UserDTO>()
-        every { userRepository.createUser(capture(slot)) } returns Result.failure(expectedException)
+        every { userRepository.createUser(
+            expectedName,
+            expectedAge,
+            expectedEmail
+        ) } returns Result.failure(expectedException)
 
         // when
         val result = useCase(name = "john", age = "20", email = "john@doe.com")
 
         // Then
-        slot.captured.run {
-            name `should be equal to` expectedName
-            age `should be equal to` expectedAge
-            email `should be equal to` expectedEmail
-        }
-
         result.isFailure `should be equal to` true
         result.exceptionOrNull() `should be equal to` expectedException
 
         verify(exactly = 1) {
-            userRepository.createUser(any())
+            userRepository.createUser(expectedName, expectedAge, expectedEmail)
         }
     }
 
@@ -79,9 +74,9 @@ class CreateUserTest {
         val name = "john"
         val age = "20"
         val email = "john@doe.com"
-        val expectedResult = CreateResultType.Ok
+        val expectedResult = true
 
-        every { userRepository.createUser(any()) } returns Result.success<CreateResultType>(CreateResultType.Ok)
+        every { userRepository.createUser(any(), any(), any()) } returns Result.success<Boolean>(true)
 
         // when
         val result = useCase(name, age, email)

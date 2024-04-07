@@ -1,6 +1,7 @@
 package com.rafver.create.ui
 
 import app.cash.turbine.test
+import com.rafver.core_testing.util.TestCoroutineRule
 import com.rafver.create.R
 import com.rafver.create.data.CreateResultType
 import com.rafver.create.domain.usecases.CreateUser
@@ -9,7 +10,7 @@ import com.rafver.create.ui.models.CreateUiErrorState
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
-import com.rafver.create.util.TestCoroutineRule
+
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -221,7 +222,7 @@ class CreateViewModelTest {
         } returns emptyList()
         every {
             createUser(name = "john", age = "30", email = "john@doe.com")
-        } returns Result.success(CreateResultType.Ok)
+        } returns Result.success(true)
 
         val expectedSnackbarEvent = CreateViewModelEffect.DisplaySnackbar(R.string.snackbar_msg_user_created)
 

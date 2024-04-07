@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.kapt)
 }
 
 android {
-    namespace = "com.rafver.core_data"
+    namespace = "com.rafver.core_testing"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -20,10 +18,7 @@ android {
 
 dependencies {
 
-    implementation(project(":core_domain"))
+    implementation(libs.kotlinx.coroutines.test)
+    implementation(libs.junit)
 
-    // Hilt
-    implementation(libs.hilt)
-    kapt(libs.hilt.kapt.compiler)
-    
 }

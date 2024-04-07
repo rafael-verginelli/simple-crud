@@ -5,19 +5,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
-import com.rafver.read.ui.models.UserUIModel
+import com.rafver.read.R
+import com.rafver.read.ui.models.ReadViewEvent
+import com.rafver.read.ui.models.UserUiModel
 
 @Composable
 fun UserListItem(
-    user: UserUIModel,
-    onClickEvent: () -> Unit,
+    user: UserUiModel,
+    onViewEvent: (ReadViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -25,15 +31,15 @@ fun UserListItem(
             .fillMaxWidth()
             .clickable(
                 enabled = true,
-                onClick = onClickEvent,
+                onClick = { onViewEvent(ReadViewEvent.OnListItemClicked(user.id)) },
             )
     ) {
         Column(
             modifier = modifier.padding(Dimensions.NORMAL_100)
         ) {
             Text(text = user.name, style = MaterialTheme.typography.titleLarge)
-            Text(text = "Age: ${user.age}")
-            Text(text = "E-mail: ${user.email}")
+            Text(text = "${stringResource(id = R.string.lbl_age)}: ${user.age}")
+            Text(text = "${stringResource(id = R.string.lbl_email)}: ${user.email}")
         }
     }
 }
@@ -43,12 +49,13 @@ fun UserListItem(
 private fun PreviewUserListItem() {
     SimpleCRUDTheme {
         UserListItem(
-            user = UserUIModel(
+            user = UserUiModel(
+                id = "1",
                 name = "John",
                 age = 30,
                 email = "john@doe.com",
             ),
-            onClickEvent = {},
+            onViewEvent = {},
         )
     }
 }

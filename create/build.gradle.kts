@@ -7,41 +7,21 @@ plugins {
 
 android {
     namespace = "com.rafver.create"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.jvmTarget.get()
     }
+
     buildFeatures {
         compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 
     // Allow references to generated code
@@ -59,9 +39,10 @@ dependencies {
 
     implementation(project(":core_ui"))
     implementation(project(":core_data"))
+    implementation(project(":core_domain"))
+    implementation(project(":core_testing"))
 
-    testImplementation(libs.junit)
-
+    // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)
 
