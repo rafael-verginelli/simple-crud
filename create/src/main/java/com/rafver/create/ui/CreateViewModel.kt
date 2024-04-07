@@ -105,14 +105,16 @@ class CreateViewModel @Inject constructor(
     }
 
     private fun handleException(error: Throwable?) {
-        // ToDo: handle exception here
         println("An error has occurred: ${error?.message}")
-
-        onViewModelEffect(
-            CreateViewModelEffect.DisplaySnackbar(
-                resId = R.string.error_create_generic,
-            )
-        )
+        when(error) {
+            else -> {
+                onViewModelEffect(
+                    CreateViewModelEffect.DisplaySnackbar(
+                        resId = R.string.error_create_generic,
+                    )
+                )
+            }
+        }
     }
 
     private fun clearForm() {

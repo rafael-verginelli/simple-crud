@@ -2,6 +2,7 @@
 package com.rafver.read.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,25 +13,34 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
-import com.rafver.read.ui.models.UserUIModel
+import com.rafver.read.R
+import com.rafver.read.ui.models.ReadUiState
+import com.rafver.read.ui.models.ReadViewEvent
+import com.rafver.read.ui.models.UserUiModel
 import com.rafver.read.ui.widgets.UserListItem
 
 @Composable
 fun ReadScreen(
-    userList: List<UserUIModel>,
-    onClickEvent: () -> Unit,
+    viewModel: ReadViewModel = viewModel()
 ) {
+    val uiState by viewModel.collectUiState()
+    val onViewEvent = viewModel::onViewEvent
+
     Scaffold(
         topBar = { ReadTopBar() }
     ) { padding ->
         Content(
-            userList = userList,
+            uiState = uiState,
+            onViewEvent = onViewEvent,
             modifier = Modifier.padding(padding),
-            onClickEvent = onClickEvent,
         )
     }
 }
@@ -38,45 +48,60 @@ fun ReadScreen(
 @Composable
 private fun ReadTopBar() {
     TopAppBar(
-        title = { Text("User List") }
+        title = { Text(stringResource(id = R.string.title_read_user)) }
     )
 }
 
 @Composable
 private fun Content(
-    userList: List<UserUIModel>,
+    uiState: ReadUiState,
+    onViewEvent: (ReadViewEvent) -> Unit,
     modifier: Modifier = Modifier,
-    onClickEvent: () -> Unit,
 ) {
     Surface(modifier = modifier) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimensions.NORMAL_100)
-        ) {
-            items(userList) { user ->
-                UserListItem(
-                    user = user,
-                    onClickEvent = onClickEvent,
-                )
+        if(uiState.loading) {
+            //ToDo: loading widget here
+        } else {
+            with(uiState.userList) {
+                if (isNullOrEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(stringResource(id = R.string.empty_list))
+                    }
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(Dimensions.NORMAL_100)
+                    ) {
+                        items(this@with) { user ->
+                            UserListItem(
+                                user = user,
+                                onViewEvent = onViewEvent,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
+
 }
 
 @Preview
 @Composable
-private fun PreviewReadScreen() {
+private fun PreviewReadScreenContent() {
     SimpleCRUDTheme {
-        ReadScreen(
-            userList = listOf(
-                UserUIModel("John", 30, "john@doe.com"),
-                UserUIModel("Audrey", 40, "audrey@hepburn.com"),
-                UserUIModel("Jane", 32, "jane@doe.com"),
-                UserUIModel("James", 50, "james@dean.com"),
+        Content(
+            uiState = ReadUiState(
+                userList = listOf(
+                    UserUiModel("1", "John", 30, "john@doe.com"),
+                    UserUiModel("2", "Audrey", 40, "audrey@hepburn.com"),
+                    UserUiModel("3", "Jane", 32, "jane@doe.com"),
+                    UserUiModel("4", "James", 50, "james@dean.com"),
+                ),
             ),
-            onClickEvent = {},
+            onViewEvent = {},
         )
     }
 }

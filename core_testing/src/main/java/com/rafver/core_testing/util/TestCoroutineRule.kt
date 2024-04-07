@@ -1,4 +1,4 @@
-package com.rafver.create.util
+package com.rafver.core_testing.util
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-// ToDo: Move this file to a separate :core_test module to be accessible to other modules.
 @OptIn(ExperimentalCoroutinesApi::class)
 class TestCoroutineRule(
     private val testDispatcher: TestDispatcher = StandardTestDispatcher(),

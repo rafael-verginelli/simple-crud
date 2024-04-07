@@ -59,9 +59,10 @@ dependencies {
 
     implementation(project(":core_ui"))
     implementation(project(":core_data"))
+    implementation(project(":core_domain"))
+    implementation(project(":core_testing"))
 
-    testImplementation(libs.junit)
-
+    // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)
 

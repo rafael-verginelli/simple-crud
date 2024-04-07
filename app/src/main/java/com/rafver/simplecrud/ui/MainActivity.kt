@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.create.ui.CreateScreen
+import com.rafver.read.ui.ReadScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,8 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //Greeting("Android")
-                    CreateScreen()
+                    ReadScreen()
                 }
             }
         }
