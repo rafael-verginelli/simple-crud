@@ -34,21 +34,21 @@ This module is responsible for fetching the data from some data source and displ
 - :core_testing
 
 ## ToDo
-- [x] Implement business logic for :create module
-- [ ] Implement loading for :create module Screen
-- [ ] Implement business logic for :read module (in progress)
-- [ ] Implement Update operation
-- [ ] Implement Update delete
-- [x] Create :core_domain module for sharing business logic
-- [x] Create testing module for sharing coroutine rules file
+- [ ] Implement loading for :create and :read modules Screen
+- [ ] Implement Update operation in :details module
+- [ ] Implement Update delete in :details module
+- [ ] Implement Single Activity architecture (Compose Navigation)
 - [ ] Add Timber logger
 - [ ] Add Coil dependency
-- [x] Add Hilt
-- [ ] Replace hardcoded strings by strings.xml file (in progress)
-- [ ] Implement Single Activity architecture (Compose Navigation)
+- [ ] Add a Linter
 - [ ] Add Unit Tests (in progress)
-- [ ] Extract all values from build.gradle files to libs.versions.toml
-- [ ] Add Lint
-- [x] Add GitHub Actions for running unit tests when PRs are created
 - [ ] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module
-- [ ] Cleanup pro guard files
+- [x] Implement business logic for :create module
+- [x] Implement business logic for :read module
+- [x] Create :core_domain module for sharing business logic
+- [x] Create testing module for sharing coroutine rules file
+- [x] Add Hilt
+- [x] Replace hardcoded strings by strings.xml file
+- [x] Extract all values from build.gradle files to libs.versions.toml
+- [x] Add GitHub Actions for running unit tests when PRs are created
+- [x] Cleanup pro guard files

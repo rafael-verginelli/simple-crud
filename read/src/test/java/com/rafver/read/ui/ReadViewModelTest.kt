@@ -3,7 +3,10 @@ package com.rafver.read.ui
 import app.cash.turbine.test
 import com.rafver.core_domain.models.UserModel
 import com.rafver.core_testing.util.TestCoroutineRule
+import com.rafver.read.R
 import com.rafver.read.domain.usecases.GetUserList
+import com.rafver.read.ui.models.ReadViewEvent
+import com.rafver.read.ui.models.ReadViewModelEffect
 import com.rafver.read.ui.models.UserUiModel
 import io.mockk.every
 import io.mockk.mockk
@@ -24,7 +27,30 @@ class ReadViewModelTest {
     private lateinit var viewModel: ReadViewModel
 
     @Test
-    fun `when view model is initialized, user list is loaded and ui state is correctly updated`() = runTest {
+    fun `when view model is initialized, try to get user list and if failed, the correct snackbar event is triggered`() = runTest {
+        // Given
+        `given the tested view model`()
+        val expectedException = Exception("Some exception")
+        every { getUserList() } returns Result.failure(expectedException)
+        val expectedSnackbarEvent = ReadViewModelEffect.DisplaySnackbar(R.string.error_read_generic)
+
+        // When
+        viewModel.uiState.test {
+            // Then
+            awaitItem().userList `should be equal to` null
+
+            expectNoEvents()
+        }
+
+        viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
+
+        verify(exactly = 1) {
+            getUserList()
+        }
+    }
+
+    @Test
+    fun `when view model is initialized, try to get user list and if successful, the ui state is correctly updated`() = runTest {
         // Given
         `given the tested view model`()
         every { getUserList() } returns Result.success(MOCK_USERS)
@@ -39,6 +65,28 @@ class ReadViewModelTest {
                 userList?.size `should be equal to` expectedUserList.size
                 userList.compareWith(expectedUserList)
             }
+
+            expectNoEvents()
+        }
+
+        verify(exactly = 1) {
+            getUserList()
+        }
+    }
+
+    @Test
+    fun `when view model is initialized, try to get user list and if successful, the ui state is correctly updated, even if the request result is empty`() = runTest {
+        // Given
+        `given the tested view model`()
+        every { getUserList() } returns Result.success(emptyList())
+        val expectedUserList = emptyList<UserUiModel>()
+
+        // When
+        viewModel.uiState.test {
+            // Then
+            awaitItem().userList `should be equal to` null
+
+            awaitItem().userList `should be equal to` expectedUserList
 
             expectNoEvents()
         }

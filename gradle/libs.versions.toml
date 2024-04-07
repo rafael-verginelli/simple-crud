@@ -18,6 +18,12 @@ turbine = "1.1.0"
 mockk = "1.13.10"
 archCore = "2.2.0"
 kluent = "1.72"
+compileSdk = "34"
+minSdk = "24"
+jvmTarget = "1.8"
+targetSdk = "34"
+versionCode = "1"
+versionName = "1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
