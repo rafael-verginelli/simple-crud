@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rafver.core_ui.theme
 
 import androidx.compose.ui.unit.dp

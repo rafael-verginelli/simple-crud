@@ -3,7 +3,6 @@ package com.rafver.create.domain.usecases
 import com.rafver.core_data.repositories.UserRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test

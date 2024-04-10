@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import com.rafver.core_ui.viewmodel.UiState
 import com.rafver.core_ui.viewmodel.ViewEvent
 import com.rafver.core_ui.viewmodel.ViewModelEffect
-import com.rafver.create.data.CreateResultType
 
 data class CreateUiState(
     val name: String = "",
