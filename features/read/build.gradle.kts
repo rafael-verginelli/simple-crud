@@ -37,10 +37,10 @@ android {
 
 dependencies {
 
-    implementation(project(":core_ui"))
-    implementation(project(":core_data"))
-    implementation(project(":core_domain"))
-    implementation(project(":core_testing"))
+    implementation(project(libs.versions.coreUi.get()))
+    implementation(project(libs.versions.coreData.get()))
+    implementation(project(libs.versions.coreDomain.get()))
+    implementation(project(libs.versions.coreTesting.get()))
 
     // Hilt
     implementation(libs.hilt)

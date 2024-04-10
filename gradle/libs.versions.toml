@@ -25,6 +25,14 @@ targetSdk = "34"
 versionCode = "1"
 versionName = "1.0"
 
+# Modules
+coreUi = ":core:core_ui"
+coreDomain = ":core:core_domain"
+coreData = ":core:core_data"
+coreTesting = ":core:core_testing"
+featureCreate = ":features:create"
+featureRead = ":features:read"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
