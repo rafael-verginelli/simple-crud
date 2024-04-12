@@ -29,3 +29,4 @@ include(":core:core_testing")
 
 include(":features:create")
 include(":features:read")
+include(":features:details")

@@ -15,7 +15,7 @@ import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.read.R
 import com.rafver.read.ui.models.ReadViewEvent
-import com.rafver.read.ui.models.UserUiModel
+import com.rafver.core_ui.models.UserUiModel
 
 @Composable
 fun UserListItem(

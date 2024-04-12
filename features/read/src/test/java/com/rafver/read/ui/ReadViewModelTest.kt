@@ -6,7 +6,7 @@ import com.rafver.core_testing.util.TestCoroutineRule
 import com.rafver.read.R
 import com.rafver.read.domain.usecases.GetUserList
 import com.rafver.read.ui.models.ReadViewModelEffect
-import com.rafver.read.ui.models.UserUiModel
+import com.rafver.core_ui.models.UserUiModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

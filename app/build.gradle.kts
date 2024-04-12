@@ -58,6 +58,7 @@ dependencies {
     implementation(project(libs.versions.coreData.get()))
     implementation(project(libs.versions.featureCreate.get()))
     implementation(project(libs.versions.featureRead.get()))
+    implementation(project(libs.versions.featureDetails.get()))
 
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)

@@ -24,7 +24,7 @@ import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.read.R
 import com.rafver.read.ui.models.ReadUiState
 import com.rafver.read.ui.models.ReadViewEvent
-import com.rafver.read.ui.models.UserUiModel
+import com.rafver.core_ui.models.UserUiModel
 import com.rafver.read.ui.widgets.UserListItem
 
 @Composable
@@ -37,7 +37,7 @@ fun ReadScreen(
     Scaffold(
         topBar = { ReadTopBar() }
     ) { padding ->
-        Content(
+        ReadContent(
             uiState = uiState,
             onViewEvent = onViewEvent,
             modifier = Modifier.padding(padding),
@@ -53,7 +53,7 @@ private fun ReadTopBar() {
 }
 
 @Composable
-private fun Content(
+private fun ReadContent(
     uiState: ReadUiState,
     onViewEvent: (ReadViewEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -92,7 +92,7 @@ private fun Content(
 @Composable
 private fun PreviewReadScreenContent() {
     SimpleCRUDTheme {
-        Content(
+        ReadContent(
             uiState = ReadUiState(
                 userList = listOf(
                     UserUiModel("1", "John", 30, "john@doe.com"),

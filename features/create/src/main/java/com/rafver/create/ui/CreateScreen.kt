@@ -71,7 +71,7 @@ fun CreateScreen(
         topBar = { CreateTopBar() },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { padding ->
-        Content(
+        CreateContent(
             uiState = uiState,
             onViewEvent = onViewEvent,
             focusRequester = focusRequester,
@@ -89,7 +89,7 @@ private fun CreateTopBar() {
 }
 
 @Composable
-private fun Content(
+private fun CreateContent(
     uiState: CreateUiState,
     onViewEvent: (CreateViewEvent) -> Unit,
     focusRequester: FocusRequester,

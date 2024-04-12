@@ -1,6 +1,7 @@
 package com.rafver.read.ui.models
 
 import androidx.annotation.StringRes
+import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.viewmodel.UiState
 import com.rafver.core_ui.viewmodel.ViewEvent
 import com.rafver.core_ui.viewmodel.ViewModelEffect

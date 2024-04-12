@@ -20,7 +20,7 @@ android {
 
 dependencies {
 
-    implementation(project(libs.versions.coreDomain.get()))
+//    implementation(project(libs.versions.coreDomain.get()))
 
     // Hilt
     implementation(libs.hilt)

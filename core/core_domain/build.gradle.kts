@@ -18,6 +18,8 @@ android {
 
 dependencies {
 
+    implementation(project(libs.versions.coreData.get()))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

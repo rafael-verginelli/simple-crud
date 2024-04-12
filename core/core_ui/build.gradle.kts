@@ -25,6 +25,8 @@ android {
 
 dependencies {
 
+    implementation(project(libs.versions.coreDomain.get()))
+
     api(libs.androidx.lifecycle.viewmodel.compose)
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)

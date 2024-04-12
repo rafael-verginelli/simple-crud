@@ -1,12 +1,12 @@
 package com.rafver.read.ui
 
+import com.rafver.core_ui.models.toUiModel
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.read.R
 import com.rafver.read.domain.usecases.GetUserList
 import com.rafver.read.ui.models.ReadUiState
 import com.rafver.read.ui.models.ReadViewEvent
 import com.rafver.read.ui.models.ReadViewModelEffect
-import com.rafver.read.ui.models.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
