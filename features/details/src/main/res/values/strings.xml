@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lbl_name">Name:</string>
+    <string name="lbl_age">Age:</string>
+    <string name="lbl_email">Email:</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="snackbar_msg_user_deleted">User deleted!</string>
+    <string name="error_details_generic">Something is wrong.</string>
+    <string name="user_not_found">User not found.</string>
+</resources>

@@ -54,11 +54,13 @@ android {
 
 dependencies {
 
-    implementation(project(":core_ui"))
-    implementation(project(":core_data"))
-    implementation(project(":create"))
-    implementation(project(":read"))
+    implementation(project(libs.versions.coreUi.get()))
+    implementation(project(libs.versions.coreData.get()))
+    implementation(project(libs.versions.featureCreate.get()))
+    implementation(project(libs.versions.featureRead.get()))
+    implementation(project(libs.versions.featureDetails.get()))
 
+    // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)
 

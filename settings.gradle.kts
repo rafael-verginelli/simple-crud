@@ -22,10 +22,11 @@ dependencyResolutionManagement {
 rootProject.name = "SimpleCRUD"
 include(":app")
 
-include(":core_ui")
-include(":core_domain")
-include(":core_data")
-include(":core_testing")
+include(":core:core_ui")
+include(":core:core_domain")
+include(":core:core_data")
+include(":core:core_testing")
 
-include(":create")
-include(":read")
+include(":features:create")
+include(":features:read")
+include(":features:details")
