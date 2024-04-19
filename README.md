@@ -51,6 +51,7 @@ This module is responsible for displaying the data of a single item to the user,
 - [ ] Add Coil dependency
 - [ ] Add a Linter
 - [ ] Add Unit Tests (in progress)
+- [ ] Unit test Compose Navigation
 - [ ] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module
 - [ ] Change ViewModel in Composable screens to HiltViewModel
 - [x] Implement Single Activity architecture (Compose Navigation)

@@ -19,7 +19,7 @@ fun NavGraphBuilder.detailsScreen() {
 }
 
 fun NavController.navigateToDetails(userId: String) {
-    this.navigate("${navigationRoute}/{$userId}")
+    this.navigate("${navigationRoute}/${userId}")
 }
 
 internal class DetailsArgs(val userId: String) {

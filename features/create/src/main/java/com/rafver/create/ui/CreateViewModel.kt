@@ -104,7 +104,7 @@ class CreateViewModel @Inject constructor(
         }
     }
 
-    private fun handleException(error: Throwable?) {
+    override fun handleException(error: Throwable?) {
         println("An error has occurred: ${error?.message}")
         when(error) {
             else -> {

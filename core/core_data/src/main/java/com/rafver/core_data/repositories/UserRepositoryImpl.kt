@@ -4,6 +4,15 @@ import com.rafver.core_data.dtos.UserDTO
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(): UserRepository {
+
+    override fun getUser(userId: String): Result<UserDTO> {
+        // ToDo: To Be Implemented
+        val userList = getUserList().getOrNull()
+        val user = userList?.firstOrNull { user -> user.id == userId }
+
+        return if(user != null) Result.success(user) else Result.failure(Exception("User not found"))
+    }
+
     override fun getUserList(): Result<List<UserDTO>> {
         // ToDo: To Be Implemented
         return Result.success(listOf(

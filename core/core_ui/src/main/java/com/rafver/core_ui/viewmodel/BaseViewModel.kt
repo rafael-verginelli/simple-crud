@@ -66,4 +66,7 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
         }
     }
     // -------
+
+    // Error Handling
+    abstract fun handleException(error: Throwable?)
 }

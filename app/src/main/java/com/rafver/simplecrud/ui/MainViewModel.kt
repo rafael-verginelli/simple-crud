@@ -16,4 +16,7 @@ class MainViewModel @Inject constructor(): BaseViewModel<MainUiState, MainViewEv
             }
         }
     }
+
+    override fun handleException(error: Throwable?) {
+    }
 }

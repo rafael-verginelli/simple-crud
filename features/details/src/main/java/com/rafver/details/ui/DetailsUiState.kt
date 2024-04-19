@@ -12,6 +12,7 @@ data class DetailsUiState(
 ) : UiState
 
 sealed class DetailsViewEvent: ViewEvent {
+    data object OnInitialize: DetailsViewEvent()
     data object OnEditClicked: DetailsViewEvent()
     data object OnDeleteClicked: DetailsViewEvent()
 }

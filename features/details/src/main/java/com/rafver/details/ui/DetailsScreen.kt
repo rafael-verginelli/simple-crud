@@ -147,15 +147,7 @@ private fun DetailsContent(
 
 @Preview
 @Composable
-fun PreviewDetailsScreen() {
-    SimpleCRUDTheme {
-        DetailsScreen()
-    }
-}
-
-@Preview
-@Composable
-fun PreviewDetailsContent() {
+private fun PreviewDetailsContent() {
     SimpleCRUDTheme {
         DetailsContent(
             uiState = DetailsUiState(
