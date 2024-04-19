@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.theme.Dimensions
@@ -35,7 +35,7 @@ import com.rafver.details.R
 
 @Composable
 fun DetailsScreen(
-    viewModel: DetailsViewModel = viewModel(),
+    viewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>(),
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent

@@ -13,9 +13,10 @@ data class ReadUiState(
 
 sealed class ReadViewEvent: ViewEvent {
     data object OnInitialize: ReadViewEvent()
-    data class OnListItemClicked(val id: String): ReadViewEvent()
+    data class OnListItemClicked(val userId: String): ReadViewEvent()
 }
 
 sealed class ReadViewModelEffect: ViewModelEffect {
     data class DisplaySnackbar(@StringRes val resId: Int): ReadViewModelEffect()
+    data class NavigateToDetails(val userId: String): ReadViewModelEffect()
 }

@@ -60,6 +60,7 @@ dependencies {
     implementation(project(libs.versions.featureRead.get()))
     implementation(project(libs.versions.featureDetails.get()))
 
+    // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)
 

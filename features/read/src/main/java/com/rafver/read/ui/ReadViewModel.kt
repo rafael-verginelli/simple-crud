@@ -13,8 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReadViewModel @Inject constructor(
     private val getUserList: GetUserList,
-)
-    : BaseViewModel<ReadUiState, ReadViewEvent, ReadViewModelEffect>(ReadUiState()) {
+) : BaseViewModel<ReadUiState, ReadViewEvent, ReadViewModelEffect>(ReadUiState()) {
 
     init {
         onViewEvent(ReadViewEvent.OnInitialize)
@@ -23,8 +22,7 @@ class ReadViewModel @Inject constructor(
     override suspend fun handleViewEvent(event: ReadViewEvent) {
         when(event) {
             is ReadViewEvent.OnListItemClicked -> {
-                println("Item ${event.id} clicked")
-                // ToDo: Implement this
+                onViewModelEffect(ReadViewModelEffect.NavigateToDetails(event.userId))
             }
             ReadViewEvent.OnInitialize -> {
                 val result = getUserList()

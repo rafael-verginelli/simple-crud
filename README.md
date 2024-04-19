@@ -47,12 +47,13 @@ This module is responsible for displaying the data of a single item to the user,
 - [ ] Implement loading for :create and :read modules Screen
 - [ ] Implement Update operation in :details module
 - [ ] Implement Update delete in :details module
-- [ ] Implement Single Activity architecture (Compose Navigation)
 - [ ] Add Timber logger
 - [ ] Add Coil dependency
 - [ ] Add a Linter
 - [ ] Add Unit Tests (in progress)
 - [ ] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module
+- [ ] Change ViewModel in Composable screens to HiltViewModel
+- [x] Implement Single Activity architecture (Compose Navigation)
 - [x] Implement business logic for :create module
 - [x] Implement business logic for :read module
 - [x] Create :core_domain module for sharing business logic
