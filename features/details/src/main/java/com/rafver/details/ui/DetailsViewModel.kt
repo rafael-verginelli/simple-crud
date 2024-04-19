@@ -28,7 +28,7 @@ class DetailsViewModel @Inject constructor(
             DetailsViewEvent.OnInitialize -> {
                 val result = getUser(detailArgs.userId)
                 val user = result.getOrNull()
-                if(result.isSuccess && user != null) {
+                if(user != null) {
                     updateState(currentState.copy(userModel = user.toUiModel()))
                 } else {
                     handleException(result.exceptionOrNull())

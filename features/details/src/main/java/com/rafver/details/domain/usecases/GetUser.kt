@@ -8,15 +8,11 @@ import javax.inject.Inject
 class GetUser @Inject constructor(private val userRepository: UserRepository){
     operator fun invoke(userId: String): Result<UserModel> {
         val result = userRepository.getUser(userId)
-        if(result.isSuccess) {
-            val user = result.getOrNull()
-            if (user != null) {
-                return Result.success(user.toDomainModel())
-            }
+        val user = result.getOrNull()
+        if (user != null) {
+            return Result.success(user.toDomainModel())
         }
-        // ToDo implement proper error handling
-        return Result.failure(
-            result.exceptionOrNull() ?: Exception("GetUserList operation failed")
-        )
+
+        return Result.failure(result.exceptionOrNull()!!)
     }
 }
