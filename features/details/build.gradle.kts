@@ -41,6 +41,8 @@ dependencies {
     implementation(project(libs.versions.coreDomain.get()))
     implementation(project(libs.versions.coreTesting.get()))
 
+    implementation(project(libs.versions.featureCreate.get()))
+    
     // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)

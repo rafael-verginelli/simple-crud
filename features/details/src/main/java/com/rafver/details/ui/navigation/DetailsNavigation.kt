@@ -11,10 +11,13 @@ import com.rafver.details.ui.DetailsViewModel
 private const val navigationRoute = "details"
 private const val userIdArg = "userId"
 
-fun NavGraphBuilder.detailsScreen() {
+fun NavGraphBuilder.detailsScreen(navController: NavController) {
     composable("${navigationRoute}/{$userIdArg}") {
         val viewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>()
-        DetailsScreen(viewModel = viewModel)
+        DetailsScreen(
+            navController = navController,
+            viewModel = viewModel,
+        )
     }
 }
 

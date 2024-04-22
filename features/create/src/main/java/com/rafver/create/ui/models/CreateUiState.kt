@@ -11,6 +11,7 @@ data class CreateUiState(
     val email: String = "",
     val loading: Boolean = false,
     val errors: CreateUiErrorState = CreateUiErrorState(),
+    val isEditMode: Boolean = false,
 ): UiState
 
 data class CreateUiErrorState(
@@ -21,11 +22,13 @@ data class CreateUiErrorState(
 )
 
 sealed class CreateViewEvent: ViewEvent {
+    data object OnInitialize: CreateViewEvent()
     data class OnNameChanged(val newValue: String): CreateViewEvent()
     data class OnAgeChanged(val newValue: String): CreateViewEvent()
     data class OnEmailChanged(val newValue: String): CreateViewEvent()
     data object OnDiscardClicked: CreateViewEvent()
     data object OnCreateClicked: CreateViewEvent()
+    data object OnUpdateClicked: CreateViewEvent()
 }
 
 sealed class CreateViewModelEffect: ViewModelEffect {

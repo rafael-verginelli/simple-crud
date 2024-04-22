@@ -17,28 +17,50 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.create.ui.navigation.navigateToEdit
 import com.rafver.details.R
 
 @Composable
 fun DetailsScreen(
+    navController: NavController,
     viewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>(),
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = viewModel.effects) {
+        viewModel.effects.collect { effect ->
+            when(effect) {
+                is DetailsViewModelEffect.DisplaySnackbar -> {
+                    snackbarHostState.showSnackbar(context.getString(effect.resId))
+                }
+                is DetailsViewModelEffect.NavigateToEdit -> {
+                    navController.navigateToEdit(effect.userId)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {

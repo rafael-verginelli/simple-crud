@@ -6,8 +6,10 @@
     <string name="lbl_email">Email</string>
     <string name="action_discard">Discard</string>
     <string name="action_create">Create</string>
+    <string name="action_update">Update</string>
     <string name="snackbar_msg_changes_discarded">Changes discarded!</string>
     <string name="snackbar_msg_user_created">User created!</string>
+    <string name="snackbar_msg_user_updated">User updated!</string>
     <string name="error_create_generic">Something is wrong.</string>
     <string name="error_create_mandatory_field">Mandatory field.</string>
     <string name="error_create_invalid_age">Age must be a number.</string>

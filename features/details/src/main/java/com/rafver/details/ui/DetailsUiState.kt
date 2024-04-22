@@ -19,4 +19,5 @@ sealed class DetailsViewEvent: ViewEvent {
 
 sealed class DetailsViewModelEffect: ViewModelEffect {
     data class DisplaySnackbar(@StringRes val resId: Int): DetailsViewModelEffect()
+    data class NavigateToEdit(val userId: String): DetailsViewModelEffect()
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.rafver.core_ui.models.toUiModel
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.details.R
-import com.rafver.details.domain.usecases.GetUser
+import com.rafver.core_domain.usecases.GetUser
 import com.rafver.details.ui.navigation.DetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class DetailsViewModel @Inject constructor(
                 TODO()
             }
             DetailsViewEvent.OnEditClicked -> {
-                TODO()
+                onViewModelEffect(DetailsViewModelEffect.NavigateToEdit(detailArgs.userId))
             }
         }
     }

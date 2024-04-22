@@ -168,19 +168,33 @@ private fun CreateContent(
             Spacer(modifier = Modifier.weight(1f))
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    enabled = uiState.name.isNotEmpty() || uiState.age.isNotEmpty() || uiState.email.isNotEmpty(),
-                    modifier = Modifier.weight(1f),
-                    onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
-                ) {
-                    Text(text = stringResource(id = R.string.action_discard))
+                if(!uiState.isEditMode) {
+                    Button(
+                        enabled = uiState.name.isNotEmpty() || uiState.age.isNotEmpty() || uiState.email.isNotEmpty(),
+                        modifier = Modifier.weight(1f),
+                        onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
+                    ) {
+                        Text(text = stringResource(id = R.string.action_discard))
+                    }
                 }
                 Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { onViewEvent(CreateViewEvent.OnCreateClicked) }
+                    onClick = {
+                        if(uiState.isEditMode) {
+                            onViewEvent(CreateViewEvent.OnUpdateClicked)
+                        } else {
+                            onViewEvent(CreateViewEvent.OnCreateClicked)
+                        }
+                    }
                 ) {
-                    Text(text = stringResource(id = R.string.action_create))
+                    Text(text = stringResource(
+                        id = if(uiState.isEditMode) {
+                            R.string.action_update
+                        } else {
+                            R.string.action_create
+                        }
+                    ))
                 }
             }
         }

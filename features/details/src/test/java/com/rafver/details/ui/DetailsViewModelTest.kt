@@ -7,7 +7,7 @@ import com.rafver.core_domain.models.UserModel
 import com.rafver.core_testing.util.TestCoroutineRule
 import com.rafver.core_ui.models.toUiModel
 import com.rafver.details.R
-import com.rafver.details.domain.usecases.GetUser
+import com.rafver.core_domain.usecases.GetUser
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
