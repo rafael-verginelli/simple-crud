@@ -13,7 +13,6 @@ import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
 import com.rafver.create.ui.navigation.EditArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 @HiltViewModel

@@ -7,4 +7,5 @@ interface UserRepository {
     fun getUserList(): Result<List<UserDTO>>
     fun createUser(name: String, age: Int, email: String): Result<Boolean>
     fun updateUser(id: String, name: String, age: Int, email: String): Result<Boolean>
+    fun deleteUser(userId: String): Result<Boolean>
 }

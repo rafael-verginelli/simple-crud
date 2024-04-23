@@ -57,7 +57,9 @@ abstract class BaseViewModel<State: UiState, Event: ViewEvent, Effect: ViewModel
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val effectsChannel = Channel<Effect>()
 
-    val effects = effectsChannel.receiveAsFlow()
+    val effects = effectsChannel.receiveAsFlow().onEach {
+        println("Emitted new Effect: $it")
+    }
 
 
     protected fun onViewModelEffect(effect: Effect) {

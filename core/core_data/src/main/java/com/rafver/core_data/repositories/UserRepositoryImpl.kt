@@ -32,4 +32,9 @@ class UserRepositoryImpl @Inject constructor(): UserRepository {
         // ToDo: To Be Implemented
         return Result.success(true)
     }
+
+    override fun deleteUser(id: String): Result<Boolean> {
+        // ToDo: To Be Implemented
+        return Result.success(true)
+    }
 }
