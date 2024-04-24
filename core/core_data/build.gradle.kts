@@ -20,8 +20,6 @@ android {
 
 dependencies {
 
-//    implementation(project(libs.versions.coreDomain.get()))
-
     // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.kapt.compiler)

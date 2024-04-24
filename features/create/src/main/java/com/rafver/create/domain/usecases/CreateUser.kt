@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class CreateUser @Inject constructor(private val userRepository: UserRepository) {
     operator fun invoke(name: String, age: String, email: String): Result<Boolean> {
-        val ageInt = age.toIntOrNull() ?: throw Exception("User data validation failed")
+        val ageInt = age.toIntOrNull() ?: throw IllegalStateException("User data validation failed")
         return userRepository.createUser(name, ageInt, email)
     }
 }

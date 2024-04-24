@@ -55,7 +55,10 @@ android {
 dependencies {
 
     implementation(project(libs.versions.coreUi.get()))
+    implementation(project(libs.versions.coreDomain.get()))
     implementation(project(libs.versions.coreData.get()))
+    implementation(project(libs.versions.coreTesting.get()))
+
     implementation(project(libs.versions.featureCreate.get()))
     implementation(project(libs.versions.featureRead.get()))
     implementation(project(libs.versions.featureDetails.get()))

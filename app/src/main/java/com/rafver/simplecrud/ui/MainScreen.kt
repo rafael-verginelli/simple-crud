@@ -20,6 +20,7 @@ import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.create.ui.CreateScreen
 import com.rafver.create.ui.CreateViewModel
+import com.rafver.create.ui.navigation.editScreen
 import com.rafver.details.ui.navigation.detailsScreen
 import com.rafver.read.ui.ReadScreen
 import com.rafver.read.ui.ReadViewModel
@@ -72,8 +73,8 @@ private fun MainContent(
                     viewModel = hiltViewModel<ReadViewModel>()
                 )
             }
-            detailsScreen()
-//            composable(Destinations.Details.name) { DetailsScreen(viewModel = hiltViewModel<DetailsViewModel>()) }
+            detailsScreen(navController)
+            editScreen()
         }
     }
 }
@@ -87,10 +88,11 @@ private fun MainBottomBar(
         MainBottomNavigation.getNavigationItems().forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = index == uiState.currentSelectedNavigationItemIndex,
-                onClick = { onViewEvent(MainViewEvent.OnBottomNavigationItemClicked(
-                    route = item.route,
-                    itemIndex = index,
-                ))
+                onClick = {
+                    onViewEvent(MainViewEvent.OnBottomNavigationItemClicked(
+                        route = item.route,
+                        itemIndex = index,
+                    ))
                 },
                 icon = {
                     Icon(imageVector = item.icon, contentDescription = item.label)

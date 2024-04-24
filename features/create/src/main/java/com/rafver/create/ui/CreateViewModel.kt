@@ -1,24 +1,53 @@
 package com.rafver.create.ui
 
+import androidx.lifecycle.SavedStateHandle
+import com.rafver.core_domain.usecases.GetUser
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.create.R
 import com.rafver.create.data.CreateResultType
 import com.rafver.create.domain.usecases.CreateUser
+import com.rafver.create.domain.usecases.UpdateUser
 import com.rafver.create.domain.usecases.ValidateUser
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
+import com.rafver.create.ui.navigation.EditArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val validateUser: ValidateUser,
     private val createUser: CreateUser,
+    private val updateUser: UpdateUser,
+    private val getUser: GetUser,
 ) : BaseViewModel<CreateUiState, CreateViewEvent, CreateViewModelEffect>(CreateUiState())
 {
+    private val editArgs = EditArgs(savedStateHandle)
+
+    init {
+        onViewEvent(CreateViewEvent.OnInitialize)
+    }
+
     override suspend fun handleViewEvent(event: CreateViewEvent) {
         when(event) {
+            CreateViewEvent.OnInitialize -> {
+                if(editArgs.userId != null) {
+                    val result = getUser(editArgs.userId)
+                    val user = result.getOrNull()
+                    if(user != null) {
+                        updateState(currentState.copy(
+                            isEditMode = true,
+                            name = user.name,
+                            age = user.age.toString(),
+                            email = user.email,
+                        ))
+                    } else {
+                        handleException(Exception("User not found"))
+                    }
+                }
+            }
             CreateViewEvent.OnDiscardClicked -> {
                 clearForm()
                 onViewModelEffect(
@@ -28,20 +57,36 @@ class CreateViewModel @Inject constructor(
                 )
                 onViewModelEffect(CreateViewModelEffect.OnNameTextInputFocusRequest)
             }
-            CreateViewEvent.OnCreateClicked -> {
+            CreateViewEvent.OnCreateClicked,
+            CreateViewEvent.OnUpdateClicked -> {
                 val validationErrors = validateUser(
                     name = currentState.name,
                     age = currentState.age,
                     email = currentState.email,
                 )
                 if(validationErrors.isEmpty()) {
-                    val result = createUser(currentState.name, currentState.age, currentState.email)
+                    val messageResId: Int
+                    val result =
+                        when(event) {
+                            CreateViewEvent.OnCreateClicked -> {
+                                println("OnCreateClicked called!")
+                                messageResId = R.string.snackbar_msg_user_created
+                                createUser(currentState.name, currentState.age, currentState.email)
+                            }
+                            CreateViewEvent.OnUpdateClicked -> {
+                                println("OnUpdateClicked called!")
+                                val userId = editArgs.userId ?: throw IllegalStateException("Missing userId")
+                                messageResId = R.string.snackbar_msg_user_updated
+                                updateUser(userId, currentState.name, currentState.age, currentState.email)
+                            }
+                            else -> {
+                                throw IllegalStateException("Operation can only be either CreateUser or UpdateUser here.")
+                            }
+                        }
                     if(result.isSuccess) {
                         clearForm()
                         onViewModelEffect(
-                            CreateViewModelEffect.DisplaySnackbar(
-                                resId = R.string.snackbar_msg_user_created,
-                            )
+                            CreateViewModelEffect.DisplaySnackbar(resId = messageResId)
                         )
                     } else {
                         val error = result.exceptionOrNull()

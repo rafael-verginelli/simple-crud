@@ -54,6 +54,12 @@ This module is responsible for displaying the data of a single item to the user,
 - [ ] Unit test Compose Navigation
 - [ ] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module
 - [ ] Change ViewModel in Composable screens to HiltViewModel
+- [ ] Fix Navigation routes
+- [ ] Toggle Bottom Navigation Bar according to the screen
+- [ ] Implement proper Error Handling for ViewModels
+- [ ] Implement fake data source
+- [ ] Find a solution for feature dependencies on features
+- [ ] Review unit test function names
 - [x] Implement Single Activity architecture (Compose Navigation)
 - [x] Implement business logic for :create module
 - [x] Implement business logic for :read module

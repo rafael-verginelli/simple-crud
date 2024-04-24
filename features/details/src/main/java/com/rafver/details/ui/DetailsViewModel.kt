@@ -1,10 +1,11 @@
 package com.rafver.details.ui
 
 import androidx.lifecycle.SavedStateHandle
+import com.rafver.core_domain.usecases.GetUser
 import com.rafver.core_ui.models.toUiModel
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.details.R
-import com.rafver.details.domain.usecases.GetUser
+import com.rafver.details.domain.usecases.DeleteUser
 import com.rafver.details.ui.navigation.DetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,9 +14,10 @@ import javax.inject.Inject
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUser: GetUser,
+    private val deleteUser: DeleteUser,
 ) : BaseViewModel<DetailsUiState, DetailsViewEvent, DetailsViewModelEffect>(
-        DetailsUiState()
-    ) {
+    DetailsUiState()
+) {
 
     private val detailArgs = DetailsArgs(savedStateHandle)
 
@@ -35,10 +37,24 @@ class DetailsViewModel @Inject constructor(
                 }
             }
             DetailsViewEvent.OnDeleteClicked -> {
-                TODO()
+                updateState(currentState.copy(showDeleteDialog = true))
+            }
+            DetailsViewEvent.OnDeleteCancelClicked -> {
+                updateState(currentState.copy(showDeleteDialog = false))
+            }
+            DetailsViewEvent.OnDeleteConfirmationClicked -> {
+                updateState(currentState.copy(showDeleteDialog = false))
+                val result = deleteUser(detailArgs.userId)
+                if(result.isSuccess) {
+                    // ToDo: implement "user deleted" message
+                    onViewModelEffect(DetailsViewModelEffect.NavigateUp)
+                } else {
+                    val error = result.exceptionOrNull()
+                    handleException(error)
+                }
             }
             DetailsViewEvent.OnEditClicked -> {
-                TODO()
+                onViewModelEffect(DetailsViewModelEffect.NavigateToEdit(detailArgs.userId))
             }
         }
     }

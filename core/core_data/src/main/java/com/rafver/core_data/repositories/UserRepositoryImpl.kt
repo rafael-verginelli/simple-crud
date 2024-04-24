@@ -28,4 +28,13 @@ class UserRepositoryImpl @Inject constructor(): UserRepository {
         return Result.success(true)
     }
 
+    override fun updateUser(id: String, name: String, age: Int, email: String): Result<Boolean> {
+        // ToDo: To Be Implemented
+        return Result.success(true)
+    }
+
+    override fun deleteUser(id: String): Result<Boolean> {
+        // ToDo: To Be Implemented
+        return Result.success(true)
+    }
 }

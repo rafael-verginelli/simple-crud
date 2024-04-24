@@ -13,32 +13,61 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.core_ui.widgets.AlertDialogWidget
+import com.rafver.create.ui.models.CreateViewEvent
+import com.rafver.create.ui.models.CreateViewModelEffect
+import com.rafver.create.ui.navigation.navigateToEdit
 import com.rafver.details.R
 
 @Composable
 fun DetailsScreen(
+    navController: NavController,
     viewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>(),
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = viewModel.effects) {
+        viewModel.effects.collect { effect ->
+            when(effect) {
+                is DetailsViewModelEffect.DisplaySnackbar -> {
+                    snackbarHostState.showSnackbar(context.getString(effect.resId))
+                }
+                is DetailsViewModelEffect.NavigateToEdit -> {
+                    navController.navigateToEdit(effect.userId)
+                }
+                DetailsViewModelEffect.NavigateUp -> {
+                    navController.navigateUp()
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -52,6 +81,18 @@ fun DetailsScreen(
             uiState = uiState,
             onViewEvent = onViewEvent,
         )
+        if(uiState.showDeleteDialog) {
+            AlertDialogWidget(
+                onDismissRequest = { onViewEvent(DetailsViewEvent.OnDeleteCancelClicked) },
+                onConfirmation = { onViewEvent(DetailsViewEvent.OnDeleteConfirmationClicked) },
+                dialogTitle = stringResource(id = R.string.dialog_title_delete_user),
+                dialogText = stringResource(id = R.string.dialog_description_delete_user),
+                confirmationText = stringResource(id = R.string.action_delete),
+                dismissText = stringResource(id = R.string.action_cancel),
+                icon = Icons.Filled.Warning,
+                iconContentDescription = "Warning"
+            )
+        }
     }
 }
 

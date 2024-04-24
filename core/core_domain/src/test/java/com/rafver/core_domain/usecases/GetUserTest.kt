@@ -1,8 +1,9 @@
-package com.rafver.details.domain.usecases
+package com.rafver.core_domain.usecases
 
 import com.rafver.core_data.dtos.UserDTO
 import com.rafver.core_data.repositories.UserRepository
 import com.rafver.core_domain.models.UserModel
+import com.rafver.core_domain.usecases.GetUser
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

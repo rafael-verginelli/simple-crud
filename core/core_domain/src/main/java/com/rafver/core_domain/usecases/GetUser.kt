@@ -1,4 +1,4 @@
-package com.rafver.details.domain.usecases
+package com.rafver.core_domain.usecases
 
 import com.rafver.core_data.repositories.UserRepository
 import com.rafver.core_domain.models.UserModel
