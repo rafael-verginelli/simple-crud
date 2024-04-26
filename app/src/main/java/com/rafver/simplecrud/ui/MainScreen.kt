@@ -12,9 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.SimpleCRUDTheme
@@ -49,6 +51,7 @@ fun MainScreen(
             MainBottomBar(
                 uiState = uiState,
                 onViewEvent = onViewEvent,
+                navController = navController,
             )
         },
     ) { paddingValues ->
@@ -83,7 +86,15 @@ private fun MainContent(
 private fun MainBottomBar(
     uiState: MainUiState,
     onViewEvent: (MainViewEvent) -> Unit,
+    navController: NavController,
 ) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    if(currentRoute !in MainBottomNavigation.getNavigationItems().map { it.route }) {
+        return
+    }
+
     NavigationBar {
         MainBottomNavigation.getNavigationItems().forEachIndexed { index, item ->
             NavigationBarItem(

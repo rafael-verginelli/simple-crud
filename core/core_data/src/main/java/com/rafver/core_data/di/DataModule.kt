@@ -1,5 +1,7 @@
 package com.rafver.core_data.di
 
+import com.rafver.core_data.datasources.UserFakeDataSource
+import com.rafver.core_data.datasources.UserFakeDataSourceImpl
 import com.rafver.core_data.repositories.UserRepositoryImpl
 import com.rafver.core_data.repositories.UserRepository
 import dagger.Binds
@@ -12,4 +14,6 @@ import dagger.hilt.components.SingletonComponent
 interface DataModule {
     @Binds
     fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+    @Binds
+    fun bindFakeUserDataSource(fakeUserDataSourceImpl: UserFakeDataSourceImpl): UserFakeDataSource
 }

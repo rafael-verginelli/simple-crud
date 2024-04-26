@@ -14,10 +14,12 @@ import com.rafver.create.ui.models.CreateUiErrorState
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyOrder
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -226,7 +228,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             createUser(name = "john", age = "30", email = "john@doe.com")
         } returns Result.success(true)
 
@@ -264,7 +266,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             validateUser("john", "30", "john@doe.com")
             createUser("john", "30", "john@doe.com")
         }
@@ -277,7 +279,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             createUser(name = "john", age = "30", email = "john@doe.com")
         } returns Result.failure(Exception("Can't add user"))
 
@@ -314,7 +316,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             validateUser("john", "30", "john@doe.com")
             createUser("john", "30", "john@doe.com")
         }
@@ -342,7 +344,7 @@ class CreateViewModelTest {
             validateUser(name = "", age = any(), email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -369,7 +371,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = "", email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -398,7 +400,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = "abc", email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -425,7 +427,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = any(), email = "")
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -469,7 +471,7 @@ class CreateViewModelTest {
             validateUser(name = "", age = "", email = "")
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -486,7 +488,7 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             getUser(any())
         }
     }
@@ -498,7 +500,7 @@ class CreateViewModelTest {
         val expectedUserName = "Audrey"
         val expectedUserAge = "25"
         val expectedUserEmail = "audrey@hepburn.com"
-        every {
+        coEvery {
             getUser("3")
         } returns Result.success(UserModel(
             id = "3",
@@ -527,7 +529,7 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             getUser(expectedUserId)
         }
     }
@@ -536,7 +538,7 @@ class CreateViewModelTest {
     fun `if user id is present in savedStateHandle, then getUser use case is called and if it fails, the error snackbar effect is called`() = runTest {
         // Given
         val expectedUserId = "3"
-        every {
+        coEvery {
             getUser("3")
         } returns Result.failure(Exception("some exception"))
 
@@ -556,7 +558,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` CreateViewModelEffect.DisplaySnackbar(resId = R.string.error_create_generic)
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             getUser(expectedUserId)
         }
     }
@@ -569,7 +571,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             updateUser(id = "1", name = "john", age = "30", email = "john@doe.com")
         } returns Result.success(true)
 
@@ -615,7 +617,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser("johnny", "31", "johnny@doe.com")
             updateUser("1","johnny", "31", "johnny@doe.com")
@@ -630,7 +632,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "johnny", age = "31", email = "johnny@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             updateUser(id = "1", name = "johnny", age = "31", email = "johnny@doe.com")
         } returns Result.failure(Exception("Can't update user"))
 
@@ -675,7 +677,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser("johnny", "31", "johnny@doe.com")
             updateUser("1","johnny", "31", "johnny@doe.com")
@@ -709,11 +711,11 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "", age = "30", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -745,11 +747,11 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -781,11 +783,11 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "abc", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -817,11 +819,11 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "30", email = "")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -879,11 +881,11 @@ class CreateViewModelTest {
             awaitItem().errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "", age = "", email = "")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -894,7 +896,7 @@ class CreateViewModelTest {
     }
 
     private fun `given that get user returns john doe of id 1`() {
-        every {
+        coEvery {
             getUser(userId = "1")
         } returns Result.success(UserModel(id = "1", name = "john", age = 30, email = "john@doe.com"))
     }

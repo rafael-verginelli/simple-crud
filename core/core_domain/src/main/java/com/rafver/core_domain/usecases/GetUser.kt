@@ -6,7 +6,7 @@ import com.rafver.core_domain.models.toDomainModel
 import javax.inject.Inject
 
 class GetUser @Inject constructor(private val userRepository: UserRepository){
-    operator fun invoke(userId: String): Result<UserModel> {
+    suspend operator fun invoke(userId: String): Result<UserModel> {
         val result = userRepository.getUser(userId)
         val user = result.getOrNull()
         if (user != null) {
