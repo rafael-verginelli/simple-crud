@@ -14,10 +14,12 @@ import com.rafver.create.ui.models.CreateUiErrorState
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
 import com.rafver.create.ui.models.CreateViewModelEffect
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyOrder
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -226,7 +228,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             createUser(name = "john", age = "30", email = "john@doe.com")
         } returns Result.success(true)
 
@@ -239,6 +241,7 @@ class CreateViewModelTest {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
             // When
             viewModel.updateState(CreateUiState(name = "john", age = "30", email = "john@doe.com"))
@@ -248,15 +251,35 @@ class CreateViewModelTest {
                 name `should be equal to` "john"
                 age `should be equal to` "30"
                 email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
             }
 
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
+            advanceUntilIdle()
+
+            // loading state
+            awaitItem().run {
+                name `should be equal to` "john"
+                age `should be equal to` "30"
+                email `should be equal to` "john@doe.com"
+                loading `should be equal to` true
+            }
+
+            // state after CreateUser is called, cancel loading
+            awaitItem().run {
+                name `should be equal to` "john"
+                age `should be equal to` "30"
+                email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
+            }
+            advanceUntilIdle()
 
             // state after clearForm() is called
             awaitItem().run {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
 
             expectNoEvents()
@@ -264,7 +287,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             validateUser("john", "30", "john@doe.com")
             createUser("john", "30", "john@doe.com")
         }
@@ -277,7 +300,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             createUser(name = "john", age = "30", email = "john@doe.com")
         } returns Result.failure(Exception("Can't add user"))
 
@@ -290,6 +313,7 @@ class CreateViewModelTest {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
             // When
             viewModel.updateState(CreateUiState(name = "john", age = "30", email = "john@doe.com"))
@@ -299,14 +323,26 @@ class CreateViewModelTest {
                 name `should be equal to` "john"
                 age `should be equal to` "30"
                 email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
             }
 
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
 
-            viewModel.currentState.run {
+            // loading call
+            awaitItem().run {
                 name `should be equal to` "john"
                 age `should be equal to` "30"
                 email `should be equal to` "john@doe.com"
+                loading `should be equal to` true
+            }
+            advanceUntilIdle()
+
+            // state after CreateUser
+            awaitItem().run {
+                name `should be equal to` "john"
+                age `should be equal to` "30"
+                email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
             }
 
             expectNoEvents()
@@ -314,7 +350,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             validateUser("john", "30", "john@doe.com")
             createUser("john", "30", "john@doe.com")
         }
@@ -332,9 +368,27 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // Then
-            awaitItem().errors.mandatoryNameError `should be equal to` null
+            // initial state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` false
+            }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
             expectNoEvents()
         }
 
@@ -342,7 +396,7 @@ class CreateViewModelTest {
             validateUser(name = "", age = any(), email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -359,9 +413,27 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // Then
-            awaitItem().errors.mandatoryAgeError `should be equal to` null
+            // initial state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
             expectNoEvents()
         }
 
@@ -369,7 +441,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = "", email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -388,9 +460,28 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // Then
-            awaitItem().errors.invalidAgeError `should be equal to` null
+            // initial state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.invalidAgeError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
+
             expectNoEvents()
         }
 
@@ -398,7 +489,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = "abc", email = any())
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -415,9 +506,27 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // Then
-            awaitItem().errors.mandatoryEmailError `should be equal to` null
+            // initial state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
+            }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
-            awaitItem().errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
             expectNoEvents()
         }
 
@@ -425,7 +534,7 @@ class CreateViewModelTest {
             validateUser(name = any(), age = any(), email = "")
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -448,20 +557,50 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // Then
-            awaitItem().errors.run {
-                mandatoryNameError `should be equal to` null
-                mandatoryAgeError `should be equal to` null
-                invalidAgeError `should be equal to` null
-                mandatoryEmailError `should be equal to` null
+            // initial state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
             }
             viewModel.onViewEvent(CreateViewEvent.OnCreateClicked)
 
-            awaitItem().errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
-            awaitItem().errors.run {
-                mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
-                invalidAgeError `should be equal to` null
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
             }
-            awaitItem().errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+
+            // name error state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
+                loading `should be equal to` true
+            }
+            // age error state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // email error state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+                loading `should be equal to` true
+            }
+
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
+                errors.mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+                loading `should be equal to` false
+            }
             expectNoEvents()
         }
 
@@ -469,7 +608,7 @@ class CreateViewModelTest {
             validateUser(name = "", age = "", email = "")
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             createUser(name = any(), age = any(), email = any())
         }
     }
@@ -486,7 +625,7 @@ class CreateViewModelTest {
             expectNoEvents()
         }
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             getUser(any())
         }
     }
@@ -498,7 +637,7 @@ class CreateViewModelTest {
         val expectedUserName = "Audrey"
         val expectedUserAge = "25"
         val expectedUserEmail = "audrey@hepburn.com"
-        every {
+        coEvery {
             getUser("3")
         } returns Result.success(UserModel(
             id = "3",
@@ -512,22 +651,34 @@ class CreateViewModelTest {
         // When
         // Then
         viewModel.uiState.test {
+            // initial state
             awaitItem().run {
                 isEditMode `should be equal to` false
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
+            // loading state
+            awaitItem().run {
+                isEditMode `should be equal to` false
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+                loading `should be equal to` true
+            }
+            // state after GetUser
             awaitItem().run {
                 isEditMode `should be equal to` true
                 name `should be equal to` expectedUserName
                 age `should be equal to` expectedUserAge
                 email `should be equal to` expectedUserEmail
+                loading `should be equal to` false
             }
             expectNoEvents()
         }
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             getUser(expectedUserId)
         }
     }
@@ -536,7 +687,7 @@ class CreateViewModelTest {
     fun `if user id is present in savedStateHandle, then getUser use case is called and if it fails, the error snackbar effect is called`() = runTest {
         // Given
         val expectedUserId = "3"
-        every {
+        coEvery {
             getUser("3")
         } returns Result.failure(Exception("some exception"))
 
@@ -545,18 +696,36 @@ class CreateViewModelTest {
         // When
         // Then
         viewModel.uiState.test {
+            // initial state
             awaitItem().run {
                 isEditMode `should be equal to` false
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
+            }
+            // loading state state
+            awaitItem().run {
+                isEditMode `should be equal to` false
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                isEditMode `should be equal to` false
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+                loading `should be equal to` false
             }
             expectNoEvents()
         }
 
         viewModel.effectsChannel.receive() `should be equal to` CreateViewModelEffect.DisplaySnackbar(resId = R.string.error_create_generic)
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             getUser(expectedUserId)
         }
     }
@@ -569,7 +738,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "john", age = "30", email = "john@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             updateUser(id = "1", name = "john", age = "30", email = "john@doe.com")
         } returns Result.success(true)
 
@@ -582,13 +751,21 @@ class CreateViewModelTest {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
-
+            // loading state
+            awaitItem().run {
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+                loading `should be equal to` true
+            }
             // state after get user
             awaitItem().run {
                 name `should be equal to` "john"
                 age `should be equal to` "30"
                 email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
             }
 
             // When
@@ -603,11 +780,28 @@ class CreateViewModelTest {
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
 
+            // loading state
+            awaitItem().run {
+                name `should be equal to` "johnny"
+                age `should be equal to` "31"
+                email `should be equal to` "johnny@doe.com"
+                loading `should be equal to` true
+            }
+
+            // cancel loading state
+            awaitItem().run {
+                name `should be equal to` "johnny"
+                age `should be equal to` "31"
+                email `should be equal to` "johnny@doe.com"
+                loading `should be equal to` false
+            }
+
             // state after clearForm() is called
             awaitItem().run {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
 
             expectNoEvents()
@@ -615,7 +809,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser("johnny", "31", "johnny@doe.com")
             updateUser("1","johnny", "31", "johnny@doe.com")
@@ -630,7 +824,7 @@ class CreateViewModelTest {
         every {
             validateUser(name = "johnny", age = "31", email = "johnny@doe.com")
         } returns emptyList()
-        every {
+        coEvery {
             updateUser(id = "1", name = "johnny", age = "31", email = "johnny@doe.com")
         } returns Result.failure(Exception("Can't update user"))
 
@@ -643,13 +837,21 @@ class CreateViewModelTest {
                 name `should be equal to` ""
                 age `should be equal to` ""
                 email `should be equal to` ""
+                loading `should be equal to` false
             }
-
-            // state after GetUser
+            // loading state
+            awaitItem().run {
+                name `should be equal to` ""
+                age `should be equal to` ""
+                email `should be equal to` ""
+                loading `should be equal to` true
+            }
+            // state after get user
             awaitItem().run {
                 name `should be equal to` "john"
                 age `should be equal to` "30"
                 email `should be equal to` "john@doe.com"
+                loading `should be equal to` false
             }
 
             // When
@@ -664,10 +866,20 @@ class CreateViewModelTest {
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
 
-            viewModel.currentState.run {
+            // loading state
+            awaitItem().run {
                 name `should be equal to` "johnny"
                 age `should be equal to` "31"
                 email `should be equal to` "johnny@doe.com"
+                loading `should be equal to` true
+            }
+
+            // cancel loading state
+            awaitItem().run {
+                name `should be equal to` "johnny"
+                age `should be equal to` "31"
+                email `should be equal to` "johnny@doe.com"
+                loading `should be equal to` false
             }
 
             expectNoEvents()
@@ -675,7 +887,7 @@ class CreateViewModelTest {
 
         viewModel.effectsChannel.receive() `should be equal to` expectedSnackbarEvent
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser("johnny", "31", "johnny@doe.com")
             updateUser("1","johnny", "31", "johnny@doe.com")
@@ -696,24 +908,53 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // initial state
-            awaitItem().errors.mandatoryNameError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` false
+            }
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` true
+            }
             // state after GetUser
-            awaitItem().errors.mandatoryNameError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` false
+            }
             // Then
             viewModel.updateState(viewModel.currentState.copy(name = ""))
-            awaitItem().errors.mandatoryNameError `should be equal to` null
+            // updated state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` false
+            }
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
-            awaitItem().errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
 
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "", age = "30", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -732,24 +973,53 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // initial state
-            awaitItem().errors.mandatoryAgeError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
+            // loading state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
             // state after GetUser
-            awaitItem().errors.mandatoryAgeError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
             // Then
             viewModel.updateState(viewModel.currentState.copy(age = ""))
-            awaitItem().errors.mandatoryAgeError `should be equal to` null
+            // updated state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
-            awaitItem().errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
 
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -768,24 +1038,53 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // initial state
-            awaitItem().errors.invalidAgeError `should be equal to` null
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
+            // loading state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
             // state after GetUser
-            awaitItem().errors.invalidAgeError `should be equal to` null
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
             // Then
             viewModel.updateState(viewModel.currentState.copy(age = "abc"))
-            awaitItem().errors.invalidAgeError `should be equal to` null
+            // updated state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` false
+            }
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
-            awaitItem().errors.invalidAgeError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.invalidAgeError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
 
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "abc", email = "john@doe.com")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -804,24 +1103,53 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // initial state
-            awaitItem().errors.mandatoryEmailError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
+            }
+            // loading state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
+            }
             // state after GetUser
-            awaitItem().errors.mandatoryEmailError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
+            }
             // Then
             viewModel.updateState(viewModel.currentState.copy(email = ""))
-            awaitItem().errors.mandatoryEmailError `should be equal to` null
+            // updated state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
+            }
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
-            awaitItem().errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+            // loading state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
+            }
+            // error state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` true
+            }
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedErrorState.resId
+                loading `should be equal to` false
+            }
 
             expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "john", age = "30", email = "")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -846,44 +1174,87 @@ class CreateViewModelTest {
         // When
         viewModel.uiState.test {
             // initial state
-            awaitItem().errors.run {
-                mandatoryNameError `should be equal to` null
-                mandatoryAgeError `should be equal to` null
-                invalidAgeError `should be equal to` null
-                mandatoryEmailError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
             }
-
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
+            }
             // after GetUser
-            awaitItem().errors.run {
-                mandatoryNameError `should be equal to` null
-                mandatoryAgeError `should be equal to` null
-                invalidAgeError `should be equal to` null
-                mandatoryEmailError `should be equal to` null
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
             }
 
             // Then
             viewModel.updateState(viewModel.currentState.copy(name = "", age = "", email = ""))
-            awaitItem().errors.run {
-                mandatoryNameError `should be equal to` null
-                mandatoryAgeError `should be equal to` null
-                invalidAgeError `should be equal to` null
-                mandatoryEmailError `should be equal to` null
+            // updated state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` false
             }
 
             viewModel.onViewEvent(CreateViewEvent.OnUpdateClicked)
-            awaitItem().errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
-            awaitItem().errors.run {
-                mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
-                invalidAgeError `should be equal to` null
+            // loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` null
+                errors.mandatoryAgeError `should be equal to` null
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` null
+                loading `should be equal to` true
             }
-            awaitItem().errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+
+            // name error state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
+                loading `should be equal to` true
+            }
+
+            // age errors state
+            awaitItem().run {
+                errors.mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
+                errors.invalidAgeError `should be equal to` null
+                loading `should be equal to` true
+            }
+
+            // email error state
+            awaitItem().run {
+                errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+                loading `should be equal to` true
+            }
+
+            // cancelling loading state
+            awaitItem().run {
+                errors.mandatoryNameError `should be equal to` expectedNameErrorState.resId
+                errors.mandatoryAgeError `should be equal to` expectedAgeErrorState.resId
+                errors.invalidAgeError `should be equal to` null
+                errors.mandatoryEmailError `should be equal to` expectedEmailErrorState.resId
+                loading `should be equal to` false
+            }
+
+            expectNoEvents()
         }
 
-        verifyOrder {
+        coVerifyOrder {
             getUser("1")
             validateUser(name = "", age = "", email = "")
         }
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             updateUser(id = any(), name = any(), age = any(), email = any())
         }
     }
@@ -894,7 +1265,7 @@ class CreateViewModelTest {
     }
 
     private fun `given that get user returns john doe of id 1`() {
-        every {
+        coEvery {
             getUser(userId = "1")
         } returns Result.success(UserModel(id = "1", name = "john", age = 30, email = "john@doe.com"))
     }

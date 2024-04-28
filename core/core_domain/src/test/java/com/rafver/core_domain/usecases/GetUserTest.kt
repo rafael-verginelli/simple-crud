@@ -3,8 +3,7 @@ package com.rafver.core_domain.usecases
 import com.rafver.core_data.dtos.UserDTO
 import com.rafver.core_data.repositories.UserRepository
 import com.rafver.core_domain.models.UserModel
-import com.rafver.core_domain.usecases.GetUser
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -21,7 +20,7 @@ class GetUserTest {
     fun `when use case is invoked, if error occurs, return failure with exception`() = runTest {
         // Given
         `given the tested use case`()
-        every { userRepository.getUser(any()) } returns Result.failure(Exception("some exception"))
+        coEvery { userRepository.getUser(any()) } returns Result.failure(Exception("some exception"))
         val expectedException = Exception("some exception")
 
         // When
@@ -38,7 +37,7 @@ class GetUserTest {
     fun `when use case is invoked, if operation is successful, return success with domain model`() = runTest {
         // Given
         `given the tested use case`()
-        every {
+        coEvery {
             userRepository.getUser("1")
         } returns Result.success(
             UserDTO(id = "1", name = "john", age = 20, email = "john@doe.com")

@@ -25,11 +25,16 @@ class ReadViewModel @Inject constructor(
                 onViewModelEffect(ReadViewModelEffect.NavigateToDetails(event.userId))
             }
             ReadViewEvent.OnInitialize -> {
+                updateState(ReadUiState(loading = true))
                 val result = getUserList()
                 if(result.isFailure) {
+                    updateState(currentState.copy(loading = false))
                     handleException(result.exceptionOrNull())
                 } else {
-                    updateState(currentState.copy(userList = result.getOrNull()?.toUiModel()))
+                    updateState(currentState.copy(
+                        loading = false,
+                        userList = result.getOrNull()?.toUiModel()
+                    ))
                 }
             }
         }

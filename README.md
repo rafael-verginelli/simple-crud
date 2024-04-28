@@ -44,29 +44,18 @@ This module is responsible for displaying the data of a single item to the user,
 - :core_testing
 - 
 ## ToDo
-- [ ] Implement loading for :create and :read modules Screen
-- [ ] Implement Update operation in :details module
-- [ ] Implement Update delete in :details module
 - [ ] Add Timber logger
 - [ ] Add Coil dependency
 - [ ] Add a Linter
-- [ ] Add Unit Tests (in progress)
 - [ ] Unit test Compose Navigation
 - [ ] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module
 - [ ] Change ViewModel in Composable screens to HiltViewModel
-- [ ] Fix Navigation routes
-- [ ] Toggle Bottom Navigation Bar according to the screen
+- [ ] Fix Navigation routes (wrongly stacking, missing popUpTo() calls)
 - [ ] Implement proper Error Handling for ViewModels
-- [ ] Implement fake data source
 - [ ] Find a solution for feature dependencies on features
 - [ ] Review unit test function names
-- [x] Implement Single Activity architecture (Compose Navigation)
-- [x] Implement business logic for :create module
-- [x] Implement business logic for :read module
-- [x] Create :core_domain module for sharing business logic
-- [x] Create testing module for sharing coroutine rules file
-- [x] Add Hilt
-- [x] Replace hardcoded strings by strings.xml file
-- [x] Extract all values from build.gradle files to libs.versions.toml
-- [x] Add GitHub Actions for running unit tests when PRs are created
-- [x] Cleanup pro guard files
+- [ ] User List not updating after Delete Operation
+- [ ] User List not updating after Edit Operation
+- [ ] Edit Operation, when finished successfully, should NavigateUp to User List
+- [ ] Verify why SingletonComponent (UserFakeDataSourceImpl) is being instantiated multiple times
+- [ ] Fix Edit Screen title

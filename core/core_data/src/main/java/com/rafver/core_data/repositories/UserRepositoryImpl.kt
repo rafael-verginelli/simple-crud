@@ -1,40 +1,28 @@
 package com.rafver.core_data.repositories
 
+import com.rafver.core_data.datasources.UserFakeDataSource
 import com.rafver.core_data.dtos.UserDTO
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(): UserRepository {
+class UserRepositoryImpl @Inject constructor(private val userFakeDataSource: UserFakeDataSource)
+    : UserRepository {
 
-    override fun getUser(userId: String): Result<UserDTO> {
-        // ToDo: To Be Implemented
-        val userList = getUserList().getOrNull()
-        val user = userList?.firstOrNull { user -> user.id == userId }
+    override suspend fun getUser(userId: String)
+            : Result<UserDTO> = userFakeDataSource.getUser(userId = userId)
 
-        return if(user != null) Result.success(user) else Result.failure(Exception("User not found"))
-    }
+    override suspend fun getUserList(): Result<List<UserDTO>> = userFakeDataSource.getUserList()
 
-    override fun getUserList(): Result<List<UserDTO>> {
-        // ToDo: To Be Implemented
-        return Result.success(listOf(
-            UserDTO("1", "John", 30, "john@doe.com"),
-            UserDTO("2", "Audrey", 40, "audrey@hepburn.com"),
-            UserDTO("3", "Jane", 32, "jane@doe.com"),
-            UserDTO("4", "James", 50, "james@dean.com"),
-        ))
-    }
+    override suspend fun createUser(name: String, age: Int, email: String)
+            : Result<Boolean> = userFakeDataSource.createUser(name = name, age = age, email = email)
 
-    override fun createUser(name: String, age: Int, email: String): Result<Boolean> {
-        // ToDo: To Be Implemented
-        return Result.success(true)
-    }
+    override suspend fun updateUser(id: String, name: String, age: Int, email: String)
+            : Result<Boolean> = userFakeDataSource.updateUser(
+        id = id,
+        name = name,
+        age = age,
+        email = email
+    )
 
-    override fun updateUser(id: String, name: String, age: Int, email: String): Result<Boolean> {
-        // ToDo: To Be Implemented
-        return Result.success(true)
-    }
-
-    override fun deleteUser(id: String): Result<Boolean> {
-        // ToDo: To Be Implemented
-        return Result.success(true)
-    }
+    override suspend fun deleteUser(id: String)
+            : Result<Boolean> = userFakeDataSource.deleteUser(userId = id)
 }

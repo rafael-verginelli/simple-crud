@@ -34,6 +34,7 @@ class CreateViewModel @Inject constructor(
         when(event) {
             CreateViewEvent.OnInitialize -> {
                 if(editArgs.userId != null) {
+                    updateState(currentState.copy(loading = true))
                     val result = getUser(editArgs.userId)
                     val user = result.getOrNull()
                     if(user != null) {
@@ -42,8 +43,10 @@ class CreateViewModel @Inject constructor(
                             name = user.name,
                             age = user.age.toString(),
                             email = user.email,
+                            loading = false,
                         ))
                     } else {
+                        updateState(currentState.copy(loading = false))
                         handleException(Exception("User not found"))
                     }
                 }
@@ -59,6 +62,7 @@ class CreateViewModel @Inject constructor(
             }
             CreateViewEvent.OnCreateClicked,
             CreateViewEvent.OnUpdateClicked -> {
+                updateState(currentState.copy(loading = true))
                 val validationErrors = validateUser(
                     name = currentState.name,
                     age = currentState.age,
@@ -69,12 +73,10 @@ class CreateViewModel @Inject constructor(
                     val result =
                         when(event) {
                             CreateViewEvent.OnCreateClicked -> {
-                                println("OnCreateClicked called!")
                                 messageResId = R.string.snackbar_msg_user_created
                                 createUser(currentState.name, currentState.age, currentState.email)
                             }
                             CreateViewEvent.OnUpdateClicked -> {
-                                println("OnUpdateClicked called!")
                                 val userId = editArgs.userId ?: throw IllegalStateException("Missing userId")
                                 messageResId = R.string.snackbar_msg_user_updated
                                 updateUser(userId, currentState.name, currentState.age, currentState.email)
@@ -84,15 +86,16 @@ class CreateViewModel @Inject constructor(
                             }
                         }
                     if(result.isSuccess) {
+                        updateState(currentState.copy(loading = false))
                         clearForm()
                         onViewModelEffect(
                             CreateViewModelEffect.DisplaySnackbar(resId = messageResId)
                         )
                     } else {
+                        updateState(currentState.copy(loading = false))
                         val error = result.exceptionOrNull()
                         handleException(error)
                     }
-
                 } else {
                     validationErrors.forEach { error ->
                         when(error) {
@@ -126,6 +129,7 @@ class CreateViewModel @Inject constructor(
                             }
                         }
                     }
+                    updateState(currentState.copy(loading = false))
                 }
             }
             is CreateViewEvent.OnAgeChanged -> {

@@ -1,9 +1,10 @@
 package com.rafver.create.domain.usecases
 
 import com.rafver.core_data.repositories.UserRepository
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 
@@ -14,7 +15,7 @@ class CreateUserTest {
     private lateinit var useCase: CreateUser
 
     @Test
-    fun `when use case is invoked, if age is not int, an error is thrown`() {
+    fun `when use case is invoked, if age is not int, an error is thrown`() = runTest {
         //Given
         `given the tested use case`()
         val name = "john"
@@ -35,20 +36,20 @@ class CreateUserTest {
         result `should be equal to` null
         caughtException?.message `should be equal to` expectedExceptionMessage
 
-        verify(exactly = 0) {
+        coVerify(exactly = 0) {
             userRepository.createUser(any(), any(), any())
         }
     }
 
     @Test
-    fun `when use case is invoked, if all params are valid but repo operation fails, fail result is returned`() {
+    fun `when use case is invoked, if all params are valid but repo operation fails, fail result is returned`() = runTest {
         //Given
         `given the tested use case`()
         val expectedName = "john"
         val expectedAge = 20
         val expectedEmail = "john@doe.com"
         val expectedException = Exception("Some Exception")
-        every { userRepository.createUser(
+        coEvery { userRepository.createUser(
             expectedName,
             expectedAge,
             expectedEmail
@@ -61,13 +62,13 @@ class CreateUserTest {
         result.isFailure `should be equal to` true
         result.exceptionOrNull() `should be equal to` expectedException
 
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             userRepository.createUser(expectedName, expectedAge, expectedEmail)
         }
     }
 
     @Test
-    fun `when use case is invoked, if all params are valid and repo operation succeeds, success result is returned`() {
+    fun `when use case is invoked, if all params are valid and repo operation succeeds, success result is returned`() = runTest {
         //Given
         `given the tested use case`()
         val name = "john"
@@ -75,7 +76,7 @@ class CreateUserTest {
         val email = "john@doe.com"
         val expectedResult = true
 
-        every { userRepository.createUser(any(), any(), any()) } returns Result.success<Boolean>(true)
+        coEvery { userRepository.createUser(any(), any(), any()) } returns Result.success(true)
 
         // when
         val result = useCase(name, age, email)

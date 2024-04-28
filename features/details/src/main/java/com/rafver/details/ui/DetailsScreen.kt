@@ -1,5 +1,8 @@
 package com.rafver.details.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,8 +41,7 @@ import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
 import com.rafver.core_ui.widgets.AlertDialogWidget
-import com.rafver.create.ui.models.CreateViewEvent
-import com.rafver.create.ui.models.CreateViewModelEffect
+import com.rafver.core_ui.widgets.LoadingSpinnerWidget
 import com.rafver.create.ui.navigation.navigateToEdit
 import com.rafver.details.R
 
@@ -117,69 +119,79 @@ private fun DetailsContent(
     uiState: DetailsUiState,
     onViewEvent: (DetailsViewEvent) -> Unit,
 ) {
-    if(uiState.loading) {
-        //ToDo: implement loading spinner
-        return
-    }
-
     Surface(modifier = modifier) {
-        if (uiState.userModel == null) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimensions.NORMAL_100)
-            ) {
-                Text(stringResource(id = R.string.user_not_found))
-            }
-            return@Surface
+
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = uiState.loading,
+        ) {
+            LoadingSpinnerWidget()
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimensions.NORMAL_100)
-                .verticalScroll(state = rememberScrollState())
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = !uiState.loading,
         ) {
-            Row {
-                Text(
-                    text = stringResource(id = R.string.lbl_name),
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
-                Text(text = uiState.userModel.name)
-            }
-            Row {
-                Text(
-                    text = stringResource(id = R.string.lbl_age),
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
-                Text(text = uiState.userModel.age.toString())
-            }
-            Row {
-                Text(
-                    text = stringResource(id = R.string.lbl_email),
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
-                Text(text = uiState.userModel.email)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = { onViewEvent(DetailsViewEvent.OnEditClicked) }
+            if (uiState.userModel == null) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimensions.NORMAL_100)
                 ) {
-                    Text(text = stringResource(id = R.string.action_edit))
+                    Text(stringResource(id = R.string.user_not_found))
                 }
-                Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = { onViewEvent(DetailsViewEvent.OnDeleteClicked) }
-                ) {
-                    Text(text = stringResource(id = R.string.action_delete))
+                return@AnimatedVisibility
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimensions.NORMAL_100)
+                    .verticalScroll(state = rememberScrollState())
+            ) {
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.lbl_name),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
+                    Text(text = uiState.userModel.name)
+                }
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.lbl_age),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
+                    Text(text = uiState.userModel.age.toString())
+                }
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.lbl_email),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
+                    Text(text = uiState.userModel.email)
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { onViewEvent(DetailsViewEvent.OnEditClicked) }
+                    ) {
+                        Text(text = stringResource(id = R.string.action_edit))
+                    }
+                    Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { onViewEvent(DetailsViewEvent.OnDeleteClicked) }
+                    ) {
+                        Text(text = stringResource(id = R.string.action_delete))
+                    }
                 }
             }
         }

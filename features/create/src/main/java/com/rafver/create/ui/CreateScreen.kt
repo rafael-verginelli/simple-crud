@@ -1,5 +1,8 @@
 package com.rafver.create.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.core_ui.widgets.LoadingSpinnerWidget
 import com.rafver.create.R
 import com.rafver.create.ui.models.CreateUiState
 import com.rafver.create.ui.models.CreateViewEvent
@@ -96,105 +100,127 @@ private fun CreateContent(
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimensions.NORMAL_100)
-                .verticalScroll(state = rememberScrollState())
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = uiState.loading,
         ) {
-            OutlinedTextField(
-                value = uiState.name,
-                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
-                label = { Text(stringResource(id = R.string.lbl_name)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                isError = uiState.errors.mandatoryNameError != null,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Next,
-                ),
-                supportingText = {
-                    uiState.errors.mandatoryNameError?.let {
-                        Text(text = stringResource(id = it))
-                    }
-                }
-            )
-            OutlinedTextField(
-                value = uiState.age,
-                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnAgeChanged(newValue)) },
-                label = { Text(stringResource(id = R.string.lbl_age)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next,
-                ),
-                isError = uiState.errors.mandatoryAgeError != null || uiState.errors.invalidAgeError != null,
-                supportingText = {
-                    uiState.errors.mandatoryAgeError?.let {
-                        Text(text = stringResource(id = it))
-                    }
-                    uiState.errors.invalidAgeError?.let {
-                        Text(text = stringResource(id = it))
-                    }
-                }
-            )
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnEmailChanged(newValue)) },
-                label = { Text(stringResource(id = R.string.lbl_email)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    capitalization = KeyboardCapitalization.None,
-                    imeAction = ImeAction.Done,
-                ),
-                isError = uiState.errors.mandatoryEmailError != null,
-                supportingText = {
-                    uiState.errors.mandatoryEmailError?.let {
-                        Text(text = stringResource(id = it))
-                    }
-                }
-            )
+            LoadingSpinnerWidget()
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = !uiState.loading,
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Dimensions.NORMAL_100),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimensions.NORMAL_100)
+                    .verticalScroll(state = rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = uiState.name,
+                    onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
+                    label = { Text(stringResource(id = R.string.lbl_name)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    isError = uiState.errors.mandatoryNameError != null,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next,
+                    ),
+                    supportingText = {
+                        uiState.errors.mandatoryNameError?.let {
+                            Text(text = stringResource(id = it))
+                        }
+                    }
+                )
+                OutlinedTextField(
+                    value = uiState.age,
+                    onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnAgeChanged(newValue)) },
+                    label = { Text(stringResource(id = R.string.lbl_age)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next,
+                    ),
+                    isError = uiState.errors.mandatoryAgeError != null || uiState.errors.invalidAgeError != null,
+                    supportingText = {
+                        uiState.errors.mandatoryAgeError?.let {
+                            Text(text = stringResource(id = it))
+                        }
+                        uiState.errors.invalidAgeError?.let {
+                            Text(text = stringResource(id = it))
+                        }
+                    }
+                )
+                OutlinedTextField(
+                    value = uiState.email,
+                    onValueChange = { newValue ->
+                        onViewEvent(
+                            CreateViewEvent.OnEmailChanged(
+                                newValue
+                            )
+                        )
+                    },
+                    label = { Text(stringResource(id = R.string.lbl_email)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        capitalization = KeyboardCapitalization.None,
+                        imeAction = ImeAction.Done,
+                    ),
+                    isError = uiState.errors.mandatoryEmailError != null,
+                    supportingText = {
+                        uiState.errors.mandatoryEmailError?.let {
+                            Text(text = stringResource(id = it))
+                        }
+                    }
+                )
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                if(!uiState.isEditMode) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    if (!uiState.isEditMode) {
+                        Button(
+                            enabled = uiState.name.isNotEmpty() || uiState.age.isNotEmpty() || uiState.email.isNotEmpty(),
+                            modifier = Modifier.weight(1f),
+                            onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
+                        ) {
+                            Text(text = stringResource(id = R.string.action_discard))
+                        }
+                    }
+                    Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
                     Button(
-                        enabled = uiState.name.isNotEmpty() || uiState.age.isNotEmpty() || uiState.email.isNotEmpty(),
                         modifier = Modifier.weight(1f),
-                        onClick = { onViewEvent(CreateViewEvent.OnDiscardClicked) }
+                        onClick = {
+                            if (uiState.isEditMode) {
+                                onViewEvent(CreateViewEvent.OnUpdateClicked)
+                            } else {
+                                onViewEvent(CreateViewEvent.OnCreateClicked)
+                            }
+                        }
                     ) {
-                        Text(text = stringResource(id = R.string.action_discard))
+                        Text(
+                            text = stringResource(
+                                id = if (uiState.isEditMode) {
+                                    R.string.action_update
+                                } else {
+                                    R.string.action_create
+                                }
+                            )
+                        )
                     }
-                }
-                Spacer(modifier = Modifier.size(Dimensions.NORMAL_100))
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        if(uiState.isEditMode) {
-                            onViewEvent(CreateViewEvent.OnUpdateClicked)
-                        } else {
-                            onViewEvent(CreateViewEvent.OnCreateClicked)
-                        }
-                    }
-                ) {
-                    Text(text = stringResource(
-                        id = if(uiState.isEditMode) {
-                            R.string.action_update
-                        } else {
-                            R.string.action_create
-                        }
-                    ))
                 }
             }
         }

@@ -1,8 +1,12 @@
-package com.rafver.core_data.repositories
+package com.rafver.core_data.datasources
 
 import com.rafver.core_data.dtos.UserDTO
 
-interface UserRepository {
+/**
+ * This is a fake data source to mimic basic CRUD operations.
+ * Replace this file by a real Data Source abstraction.
+ */
+interface UserFakeDataSource {
     suspend fun getUser(userId: String): Result<UserDTO>
     suspend fun getUserList(): Result<List<UserDTO>>
     suspend fun createUser(name: String, age: Int, email: String): Result<Boolean>

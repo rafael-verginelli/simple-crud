@@ -28,11 +28,16 @@ class DetailsViewModel @Inject constructor(
     override suspend fun handleViewEvent(event: DetailsViewEvent) {
         when(event) {
             DetailsViewEvent.OnInitialize -> {
+                updateState(currentState.copy(loading = true))
                 val result = getUser(detailArgs.userId)
                 val user = result.getOrNull()
                 if(user != null) {
-                    updateState(currentState.copy(userModel = user.toUiModel()))
+                    updateState(currentState.copy(
+                        loading = false,
+                        userModel = user.toUiModel(),
+                    ))
                 } else {
+                    updateState(currentState.copy(loading = false))
                     handleException(result.exceptionOrNull())
                 }
             }
@@ -43,13 +48,15 @@ class DetailsViewModel @Inject constructor(
                 updateState(currentState.copy(showDeleteDialog = false))
             }
             DetailsViewEvent.OnDeleteConfirmationClicked -> {
-                updateState(currentState.copy(showDeleteDialog = false))
+                updateState(currentState.copy(showDeleteDialog = false, loading = true))
                 val result = deleteUser(detailArgs.userId)
                 if(result.isSuccess) {
                     // ToDo: implement "user deleted" message
+                    updateState(currentState.copy(loading = false))
                     onViewModelEffect(DetailsViewModelEffect.NavigateUp)
                 } else {
                     val error = result.exceptionOrNull()
+                    updateState(currentState.copy(loading = false))
                     handleException(error)
                 }
             }

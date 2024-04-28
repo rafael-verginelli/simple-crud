@@ -1,13 +1,21 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.rafver.read.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -17,21 +25,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.rafver.core_ui.extensions.collectUiState
+import com.rafver.core_ui.models.UserUiModel
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
+import com.rafver.core_ui.widgets.LoadingSpinnerWidget
+import com.rafver.details.ui.navigation.navigateToDetails
 import com.rafver.read.R
 import com.rafver.read.ui.models.ReadUiState
 import com.rafver.read.ui.models.ReadViewEvent
-import com.rafver.core_ui.models.UserUiModel
-import com.rafver.details.ui.navigation.navigateToDetails
 import com.rafver.read.ui.models.ReadViewModelEffect
 import com.rafver.read.ui.widgets.UserListItem
 
@@ -83,13 +93,37 @@ private fun ReadContent(
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
-        if(uiState.loading) {
-            //ToDo: loading widget here
-        } else {
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = uiState.loading,
+        ) {
+            LoadingSpinnerWidget()
+        }
+        AnimatedVisibility(
+            enter = fadeIn(),
+            exit = fadeOut(),
+            visible = !uiState.loading,
+        ) {
             with(uiState.userList) {
                 if (isNullOrEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(stringResource(id = R.string.empty_list))
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Empty",
+                                modifier = Modifier
+                                    .size(Dimensions.LARGE_200)
+                                    .alpha(0.1f)
+                            )
+                            Text(stringResource(id = R.string.empty_list))
+                        }
                     }
                 } else {
                     LazyColumn(
@@ -125,6 +159,17 @@ private fun PreviewReadScreenContent() {
                     UserUiModel("4", "James", 50, "james@dean.com"),
                 ),
             ),
+            onViewEvent = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewReadScreenEmptyContent() {
+    SimpleCRUDTheme {
+        ReadContent(
+            uiState = ReadUiState(userList = emptyList()),
             onViewEvent = {},
         )
     }
