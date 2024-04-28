@@ -73,12 +73,10 @@ class CreateViewModel @Inject constructor(
                     val result =
                         when(event) {
                             CreateViewEvent.OnCreateClicked -> {
-                                println("OnCreateClicked called!")
                                 messageResId = R.string.snackbar_msg_user_created
                                 createUser(currentState.name, currentState.age, currentState.email)
                             }
                             CreateViewEvent.OnUpdateClicked -> {
-                                println("OnUpdateClicked called!")
                                 val userId = editArgs.userId ?: throw IllegalStateException("Missing userId")
                                 messageResId = R.string.snackbar_msg_user_updated
                                 updateUser(userId, currentState.name, currentState.age, currentState.email)
@@ -98,7 +96,6 @@ class CreateViewModel @Inject constructor(
                         val error = result.exceptionOrNull()
                         handleException(error)
                     }
-
                 } else {
                     validationErrors.forEach { error ->
                         when(error) {
