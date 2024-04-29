@@ -26,7 +26,7 @@ Creation or Insertion, this module is responsible for getting user input and pre
 - :core_domain
 - :core_data
 - :core_testing
-- 
+
 ### :features:read module
 This module is responsible for fetching the data from some data source and displaying it to the user.
 **Dependencies:**
@@ -34,7 +34,7 @@ This module is responsible for fetching the data from some data source and displ
 - :core_domain
 - :core_data
 - :core_testing
-- 
+
 ### :features:details module
 This module is responsible for displaying the data of a single item to the user, as well as triggering edition and deletion of that item.
 **Dependencies:**
@@ -42,9 +42,9 @@ This module is responsible for displaying the data of a single item to the user,
 - :core_domain
 - :core_data
 - :core_testing
-- 
+
 ## ToDo
-- [ ] Add Timber logger
+- [x] Add Timber logger
 - [ ] Add Coil dependency
 - [ ] Add a Linter
 - [ ] Unit test Compose Navigation
@@ -59,3 +59,4 @@ This module is responsible for displaying the data of a single item to the user,
 - [ ] Edit Operation, when finished successfully, should NavigateUp to User List
 - [ ] Verify why SingletonComponent (UserFakeDataSourceImpl) is being instantiated multiple times
 - [ ] Fix Edit Screen title
+- [ ] Resolve ToDos

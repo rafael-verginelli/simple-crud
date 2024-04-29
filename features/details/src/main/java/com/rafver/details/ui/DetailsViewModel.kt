@@ -1,6 +1,7 @@
 package com.rafver.details.ui
 
 import androidx.lifecycle.SavedStateHandle
+import com.rafver.core_data.utils.createLogger
 import com.rafver.core_domain.usecases.GetUser
 import com.rafver.core_ui.models.toUiModel
 import com.rafver.core_ui.viewmodel.BaseViewModel
@@ -18,7 +19,7 @@ class DetailsViewModel @Inject constructor(
 ) : BaseViewModel<DetailsUiState, DetailsViewEvent, DetailsViewModelEffect>(
     DetailsUiState()
 ) {
-
+    private val logger by lazy { createLogger() }
     private val detailArgs = DetailsArgs(savedStateHandle)
 
     init {
@@ -67,7 +68,7 @@ class DetailsViewModel @Inject constructor(
     }
 
     override fun handleException(error: Throwable?) {
-        println("An error has occurred: ${error?.message}")
+        logger.d("An error has occurred.", error)
         when(error) {
             else -> {
                 onViewModelEffect(

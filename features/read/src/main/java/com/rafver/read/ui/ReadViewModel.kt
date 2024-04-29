@@ -1,5 +1,6 @@
 package com.rafver.read.ui
 
+import com.rafver.core_data.utils.createLogger
 import com.rafver.core_ui.models.toUiModel
 import com.rafver.core_ui.viewmodel.BaseViewModel
 import com.rafver.read.R
@@ -14,6 +15,8 @@ import javax.inject.Inject
 class ReadViewModel @Inject constructor(
     private val getUserList: GetUserList,
 ) : BaseViewModel<ReadUiState, ReadViewEvent, ReadViewModelEffect>(ReadUiState()) {
+
+    private val logger by lazy { createLogger() }
 
     init {
         onViewEvent(ReadViewEvent.OnInitialize)
@@ -41,7 +44,7 @@ class ReadViewModel @Inject constructor(
     }
 
     override fun handleException(error: Throwable?) {
-        println("An error has occurred: ${error?.message}")
+        logger.d("An error has occurred.", error)
 
         when(error) {
             else -> {

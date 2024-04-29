@@ -17,10 +17,6 @@ class UserFakeDataSourceImpl @Inject constructor(): UserFakeDataSource {
 
     private val fakeDelays = listOf(500L, 1000L, 2000L)
 
-    init {
-        println("UserFakeDataSourceImpl INIT!!!!")
-    }
-
     override suspend fun getUser(userId: String): Result<UserDTO> {
         delay(fakeDelays.shuffled().first())
         val user = userList.firstOrNull { it.id == userId }

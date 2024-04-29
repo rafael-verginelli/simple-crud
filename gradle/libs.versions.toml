@@ -15,6 +15,7 @@ kapt = "1.9.23"
 navigationCompose = "2.7.7"
 hiltNavigationCompose = "1.2.0"
 composeCompiler = "1.5.12"
+timber = "5.0.1"
 
 # Tests
 coroutines = "1.8.0"
@@ -65,6 +66,7 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 androidx-arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
 kluent = { group = "org.amshove.kluent", name = "kluent", version.ref = "kluent"}
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
