@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.rafver.core_ui.extensions.collectUiState
@@ -47,7 +48,7 @@ import com.rafver.read.ui.widgets.UserListItem
 
 @Composable
 fun ReadScreen(
-    viewModel: ReadViewModel = viewModel(),
+    viewModel: ReadViewModel = hiltViewModel<ReadViewModel>(),
     navController: NavHostController
 ) {
     val uiState by viewModel.collectUiState()

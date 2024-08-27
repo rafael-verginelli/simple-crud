@@ -41,7 +41,12 @@ fun MainScreen(
     LaunchedEffect(key1 = viewModel.effects) {
         viewModel.effects.collect { effect ->
             when(effect) {
-                is MainViewModelEffect.NavigateTo -> navController.navigate(effect.route)
+                is MainViewModelEffect.NavigateTo -> {
+                    if(navController.currentBackStackEntry?.destination?.route != effect.route) {
+                        navController.popBackStack(effect.route, true)
+                        navController.navigate(effect.route)
+                    }
+                }
             }
         }
     }
@@ -69,7 +74,12 @@ private fun MainContent(
 ) {
     Surface(modifier = modifier) {
         NavHost(navController = navController, startDestination = Destinations.Read.name) {
-            composable(Destinations.Create.name) { CreateScreen(viewModel = hiltViewModel<CreateViewModel>()) }
+            composable(Destinations.Create.name) {
+                CreateScreen(
+                    navController = navController,
+                    viewModel = hiltViewModel<CreateViewModel>()
+                )
+            }
             composable(Destinations.Read.name) {
                 ReadScreen(
                     navController = navController,
@@ -77,7 +87,7 @@ private fun MainContent(
                 )
             }
             detailsScreen(navController)
-            editScreen()
+            editScreen(navController = navController)
         }
     }
 }

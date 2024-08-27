@@ -34,4 +34,5 @@ sealed class CreateViewEvent: ViewEvent {
 sealed class CreateViewModelEffect: ViewModelEffect {
     data class DisplaySnackbar(@StringRes val resId: Int): CreateViewModelEffect()
     data object OnNameTextInputFocusRequest: CreateViewModelEffect()
+    data object NavigateUp: CreateViewModelEffect()
 }

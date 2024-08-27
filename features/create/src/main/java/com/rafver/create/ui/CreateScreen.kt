@@ -36,7 +36,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.rafver.core_ui.extensions.collectUiState
 import com.rafver.core_ui.theme.Dimensions
 import com.rafver.core_ui.theme.SimpleCRUDTheme
@@ -48,7 +49,8 @@ import com.rafver.create.ui.models.CreateViewModelEffect
 
 @Composable
 fun CreateScreen(
-    viewModel: CreateViewModel = viewModel()
+    navController: NavController,
+    viewModel: CreateViewModel = hiltViewModel<CreateViewModel>()
 ) {
     val uiState by viewModel.collectUiState()
     val onViewEvent = viewModel::onViewEvent
@@ -67,12 +69,16 @@ fun CreateScreen(
                 CreateViewModelEffect.OnNameTextInputFocusRequest -> {
                     focusRequester.freeFocus()
                 }
+
+                CreateViewModelEffect.NavigateUp -> {
+                    navController.navigateUp()
+                }
             }
         }
     }
 
     Scaffold(
-        topBar = { CreateTopBar() },
+        topBar = { CreateTopBar(uiState) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { padding ->
         CreateContent(
@@ -86,10 +92,16 @@ fun CreateScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CreateTopBar() {
-    TopAppBar(
-        title = { Text(stringResource(id = R.string.title_create_user)) }
-    )
+private fun CreateTopBar(uiState: CreateUiState,) {
+    AnimatedVisibility(visible = !uiState.loading) {
+        TopAppBar(
+            title = {
+                Text(stringResource(
+                    id = if(uiState.isEditMode) { R.string.title_edit_user } else { R.string.title_create_user }
+                ))
+            }
+        )
+    }
 }
 
 @Composable
@@ -123,7 +135,7 @@ private fun CreateContent(
                 OutlinedTextField(
                     value = uiState.name,
                     onValueChange = { newValue -> onViewEvent(CreateViewEvent.OnNameChanged(newValue)) },
-                    label = { Text(stringResource(id = R.string.lbl_name)) },
+                    label = { Text(stringResource(id = com.rafver.create.R.string.lbl_name)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
@@ -231,6 +243,12 @@ private fun CreateContent(
 @Composable
 private fun PreviewCreateScreen() {
     SimpleCRUDTheme {
-        CreateScreen()
+        CreateContent(
+            uiState = CreateUiState(),
+            onViewEvent = {},
+            focusRequester = remember {
+                FocusRequester()
+            }
+        )
     }
 }

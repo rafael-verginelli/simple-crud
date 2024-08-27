@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_create_user">Create New User</string>
+    <string name="title_edit_user">Editing User</string>
     <string name="lbl_name">Name</string>
     <string name="lbl_age">Age</string>
     <string name="lbl_email">Email</string>

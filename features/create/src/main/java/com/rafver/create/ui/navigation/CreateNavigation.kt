@@ -11,10 +11,13 @@ import com.rafver.create.ui.CreateViewModel
 private const val navigationRoute = "create"
 private const val userIdArg = "userId"
 
-fun NavGraphBuilder.editScreen() {
+fun NavGraphBuilder.editScreen(navController: NavController) {
     composable("${navigationRoute}/{$userIdArg}") {
         val viewModel: CreateViewModel = hiltViewModel<CreateViewModel>()
-        CreateScreen(viewModel = viewModel)
+        CreateScreen(
+            navController = navController,
+            viewModel = viewModel
+        )
     }
 }
 

@@ -153,7 +153,7 @@ private fun DetailsContent(
             ) {
                 Row {
                     Text(
-                        text = stringResource(id = R.string.lbl_name),
+                        text = stringResource(id = R.string.details_lbl_name),
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
@@ -161,7 +161,7 @@ private fun DetailsContent(
                 }
                 Row {
                     Text(
-                        text = stringResource(id = R.string.lbl_age),
+                        text = stringResource(id = R.string.details_lbl_age),
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.size(Dimensions.SMALL_100))
@@ -169,7 +169,7 @@ private fun DetailsContent(
                 }
                 Row {
                     Text(
-                        text = stringResource(id = R.string.lbl_email),
+                        text = stringResource(id = R.string.details_lbl_email),
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.size(Dimensions.SMALL_100))

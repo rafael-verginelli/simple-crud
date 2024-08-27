@@ -15,7 +15,7 @@ class UserFakeDataSourceImpl @Inject constructor(): UserFakeDataSource {
         private val userList = mutableListOf<UserDTO>()
     }
 
-    private val fakeDelays = listOf(500L, 1000L, 2000L)
+    private val fakeDelays = listOf(100L, 300L, 600L)
 
     override suspend fun getUser(userId: String): Result<UserDTO> {
         delay(fakeDelays.shuffled().first())

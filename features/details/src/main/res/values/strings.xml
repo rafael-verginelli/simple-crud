@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lbl_name">Name:</string>
-    <string name="lbl_age">Age:</string>
-    <string name="lbl_email">Email:</string>
+    <string name="details_lbl_name">Name:</string>
+    <string name="details_lbl_age">Age:</string>
+    <string name="details_lbl_email">Email:</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>

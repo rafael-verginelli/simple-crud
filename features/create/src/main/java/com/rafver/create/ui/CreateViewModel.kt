@@ -52,6 +52,7 @@ class CreateViewModel @Inject constructor(
                         handleException(Exception("User not found"))
                     }
                 }
+                createLogger().d("Is Editing: " + currentState.isEditMode)
             }
             CreateViewEvent.OnDiscardClicked -> {
                 clearForm()
@@ -90,6 +91,10 @@ class CreateViewModel @Inject constructor(
                     if(result.isSuccess) {
                         updateState(currentState.copy(loading = false))
                         clearForm()
+                        if(event is CreateViewEvent.OnUpdateClicked) {
+                            // Go back to Details if it was Update Operation
+                            onViewModelEffect(CreateViewModelEffect.NavigateUp)
+                        }
                         onViewModelEffect(
                             CreateViewModelEffect.DisplaySnackbar(resId = messageResId)
                         )
