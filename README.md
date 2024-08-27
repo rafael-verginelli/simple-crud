@@ -65,16 +65,11 @@ Note: currently I'm not able to test if certain [ViewEvent] happened, this is a 
 - [ ] Review unit test function names
 - [ ] Verify why SingletonComponent (UserFakeDataSourceImpl) is being instantiated multiple times
 - [ ] Resolve ToDos
-- [x] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module (couldn't reproduce) 
-- [x] Change ViewModel in Composable screens to HiltViewModel
-- [x] Fix Navigation routes (wrongly stacking, missing popUpTo() calls)
-- [x] Edit Operation, when finished successfully, should NavigateUp to User Details
-- [x] Fix Edit Screen title
+- [x] Fix issue where keyboard instances stack when focusing on the different Text Inputs on :create module (couldn't reproduce)
 - [ ] Use Flow in Repos to instantly reflect changes to all observers
 - [ ] After editing, going back to Details doesn't show updated registry (flow in repo task should solve it)
 - [ ] After editing, going back to Details then to List doesn't show updated registry (flow in repo task should solve it)
 - [ ] After deleting, List doesn't show changes (flow in repo task should solve it)
-- [ ] In insertion, label "name" has ":" in front but age and email don't
 - [ ] When editing a registry, title of the page is still "create" instead of "edit"
 - [ ] When transitioning from list of users to edit user, "User not found" is displayed, it would be better to leave nothing until loading comes up
 - [ ] After editing, going back to Details has no arrow, must rely on native back arrow
